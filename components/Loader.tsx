@@ -101,9 +101,15 @@ export default function Loader({ onDone }: { onDone: () => void }) {
   return (
     <div ref={wrapRef} className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[var(--green)]">
       <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
-      <div className="relative z-10 flex flex-col items-center gap-8">
+      <div className="relative z-10 flex flex-col items-center gap-6">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/palm.png"
+          alt="Goa Palm Loading"
+          className="h-20 w-20 object-contain drop-shadow-[0_8px_18px_rgba(0,0,0,0.5)] animate-bounce"
+        />
         <div className="text-center">
-          <div className="font-[var(--font-script)] text-[16px] font-bold text-[var(--yellow)]">2:47pm</div>
+          <div className="font-[var(--font-script)] text-[18px] font-bold text-[var(--yellow)]">2:47pm</div>
           <div className="font-[var(--font-mono)] text-[10px] tracking-[.2em] text-[var(--yellow)]">STUDIO</div>
         </div>
         <div className="w-[240px]">

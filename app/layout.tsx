@@ -29,6 +29,11 @@ const nunito = Nunito_Sans({
 export const metadata: Metadata = {
   title: "HH Goa 2026 — Stamp Office",
   description: "Get your HH Goa 2026 builder ID stamped, issued, and ready to share.",
+  icons: {
+    icon: "/icon.png",
+    shortcut: "/favicon.ico",
+    apple: "/apple-icon.png",
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
