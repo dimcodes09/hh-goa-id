@@ -5,9 +5,11 @@ import type { Metadata } from 'next';
 export async function generateMetadata(props: PageProps<'/p/[id]'>): Promise<Metadata> {
   const sp = await props.searchParams;
   const img = typeof sp.img === 'string' ? sp.img : '';
+  const og = typeof sp.og === 'string' ? sp.og : img;
   const name = typeof sp.name === 'string' ? sp.name : 'a builder';
   const title = `${name}'s HH Goa 2026 builder card`;
   const description = 'Stamped for HH Goa 2026. #FrameInGoa';
+
   return {
     title,
     description,
@@ -15,13 +17,13 @@ export async function generateMetadata(props: PageProps<'/p/[id]'>): Promise<Met
       title,
       description,
       type: 'website',
-      images: img ? [{ url: img, width: 1600, height: 2000, alt: title }] : [],
+      images: og ? [{ url: og, width: 1200, height: 630, alt: title }] : [],
     },
     twitter: {
       card: 'summary_large_image',
       title,
       description,
-      images: img ? [img] : [],
+      images: og ? [og] : [],
     },
   };
 }
@@ -36,7 +38,12 @@ export default async function SharedCardPage(props: PageProps<'/p/[id]'>) {
       <div className="font-[var(--font-mono)] text-[12px] tracking-[.14em] text-[var(--yellow)]">HH GOA 2026 · STAMP OFFICE</div>
       {img && (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={img} alt={`${name}'s builder card`} className="w-full max-w-[360px] rounded-2xl" style={{ boxShadow: '0 24px 48px rgba(11,47,31,.4)' }} />
+        <img
+          src={img}
+          alt={`${name}'s builder card`}
+          className="w-full max-w-[360px] rounded-2xl"
+          style={{ boxShadow: '0 24px 48px rgba(11,47,31,.4)' }}
+        />
       )}
       <a
         href="/"

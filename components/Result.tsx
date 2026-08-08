@@ -95,25 +95,35 @@ export default function Result({ edition, rawPhoto, duoPhoto, name, stack, ident
 
     // desktop: X's tweet-intent URL has no way to attach a file, only a link. So host the PNG
     // and hand X a link whose og:image *is* the card — the tweet preview shows it automatically.
-    let hostedUrl = '';
+    let cardUrl = '';
+    let ogUrl = '';
+    const ts = Date.now();
     try {
-      const filename = `cards/hh-goa-2026-${edition.id}-${Date.now()}.png`;
-      const res = await fetch(`/api/upload?filename=${encodeURIComponent(filename)}`, {
-        method: 'POST',
-        body: ogBlob,
-      });
-      if (res.ok) {
-        const data = (await res.json()) as { url?: string };
-        if (data.url) hostedUrl = data.url;
+      const cardFilename = `cards/hh-goa-2026-${edition.id}-${ts}.png`;
+      const ogFilename = `cards/hh-goa-2026-${edition.id}-${ts}-og.png`;
+
+      const [cardRes, ogRes] = await Promise.all([
+        fetch(`/api/upload?filename=${encodeURIComponent(cardFilename)}`, { method: 'POST', body: blob }),
+        fetch(`/api/upload?filename=${encodeURIComponent(ogFilename)}`, { method: 'POST', body: ogBlob }),
+      ]);
+
+      if (cardRes.ok) {
+        const data = (await cardRes.json()) as { url?: string };
+        if (data.url) cardUrl = data.url;
+      }
+      if (ogRes.ok) {
+        const data = (await ogRes.json()) as { url?: string };
+        if (data.url) ogUrl = data.url;
       }
     } catch {
       // ignore upload error and fallback to page URL without forcing a local file download
     }
 
     const cleanId = identity.builderId.replace(/[^a-zA-Z0-9]/g, '');
-    const ts = Date.now();
-    const imgParam = hostedUrl
-      ? `?img=${encodeURIComponent(hostedUrl)}&name=${encodeURIComponent(name || 'a builder')}&e=${edition.id}&v=${ts}`
+    const mainImg = cardUrl || ogUrl;
+    const ogImg = ogUrl || cardUrl;
+    const imgParam = mainImg
+      ? `?img=${encodeURIComponent(mainImg)}&og=${encodeURIComponent(ogImg)}&name=${encodeURIComponent(name || 'a builder')}&e=${edition.id}&v=${ts}`
       : `?name=${encodeURIComponent(name || 'a builder')}&e=${edition.id}&v=${ts}`;
     const pageUrl = `${window.location.origin}/p/${cleanId}${imgParam}`;
     const intentUrl = `https://x.com/intent/tweet?text=${encodeURIComponent(caption)}&url=${encodeURIComponent(pageUrl)}`;
