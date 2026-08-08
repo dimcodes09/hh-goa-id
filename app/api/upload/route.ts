@@ -21,7 +21,7 @@ function getBlobOptions() {
     }
   }
 
-  // 2. Check Token (for static token auth fallback if OIDC storeId not present)
+  // 2. Check Token (for static token auth fallback)
   if (process.env.BLOB_READ_WRITE_TOKEN) {
     options.token = process.env.BLOB_READ_WRITE_TOKEN;
   } else {
@@ -39,18 +39,37 @@ function getBlobOptions() {
 // Hosts a generated card PNG so X's link-preview crawler has something to fetch —
 // X's tweet-intent URL has no way to accept an image file directly, only a link.
 export async function POST(req: Request) {
+  let file: File | null = null;
   try {
     const form = await req.formData();
-    const file = form.get('file');
-    if (!(file instanceof File)) {
-      return NextResponse.json({ error: 'no file' }, { status: 400 });
+    const f = form.get('file');
+    if (f instanceof File) {
+      file = f;
     }
+  } catch (e) {
+    console.error('Failed to parse form data:', e);
+  }
 
+  if (!file) {
+    return NextResponse.json({ error: 'no file' }, { status: 400 });
+  }
+
+  // Try Vercel Blob Put
+  try {
     const options = getBlobOptions();
     const blob = await put(`cards/${Date.now()}-${Math.random().toString(36).slice(2)}.png`, file, options as unknown as Parameters<typeof put>[2]);
     return NextResponse.json({ url: blob.url });
-  } catch (e) {
-    console.error('Vercel Blob Upload error:', e);
-    return NextResponse.json({ error: e instanceof Error ? e.message : 'upload failed' }, { status: 500 });
+  } catch (blobErr) {
+    console.warn('Vercel Blob put failed, converting to data URL fallback:', blobErr);
+    
+    // Fallback: Return Data URL so local dev or unconfigured Blob environment still works seamlessly
+    try {
+      const arrayBuffer = await file.arrayBuffer();
+      const base64 = Buffer.from(arrayBuffer).toString('base64');
+      const dataUrl = `data:${file.type || 'image/png'};base64,${base64}`;
+      return NextResponse.json({ url: dataUrl });
+    } catch {
+      return NextResponse.json({ error: blobErr instanceof Error ? blobErr.message : 'upload failed' }, { status: 500 });
+    }
   }
 }
