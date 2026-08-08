@@ -97,9 +97,11 @@ export default function Result({ edition, rawPhoto, duoPhoto, name, stack, ident
     // and hand X a link whose og:image *is* the card — the tweet preview shows it automatically.
     let hostedUrl = '';
     try {
-      const form = new FormData();
-      form.append('file', ogBlob, `hh-goa-2026-${edition.id}-og.png`);
-      const res = await fetch('/api/upload', { method: 'POST', body: form });
+      const filename = `cards/hh-goa-2026-${edition.id}-${Date.now()}.png`;
+      const res = await fetch(`/api/upload?filename=${encodeURIComponent(filename)}`, {
+        method: 'POST',
+        body: ogBlob,
+      });
       if (res.ok) {
         const data = (await res.json()) as { url?: string };
         if (data.url) hostedUrl = data.url;
