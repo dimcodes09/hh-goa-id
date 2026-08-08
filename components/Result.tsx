@@ -2,6 +2,7 @@
 
 import { useCallback, useRef, useState } from 'react';
 import { Download, Share2, RefreshCw, LayoutGrid, Move, Palette, type LucideIcon } from 'lucide-react';
+import html2canvas from 'html2canvas';
 import CardCanvas from './CardCanvas';
 import { renderCard, renderPFP, type EditionConfig } from '@/lib/render/engine';
 import { EVENT } from '@/lib/tokens';
@@ -33,7 +34,22 @@ export default function Result({ edition, rawPhoto, duoPhoto, name, stack, ident
 
   const photo = fullColor ? rawPhoto : duoPhoto;
 
-  const getCardDataUrl = useCallback(() => {
+  const getCardDataUrl = useCallback(async (): Promise<string> => {
+    try {
+      const element = document.getElementById('builder-card-element');
+      if (element) {
+        const canvas = await html2canvas(element, {
+          scale: 3,
+          useCORS: true,
+          allowTaint: true,
+          backgroundColor: null,
+          logging: false,
+        });
+        return canvas.toDataURL('image/png');
+      }
+    } catch (e) {
+      console.warn('html2canvas capture warning, falling back to 2d engine:', e);
+    }
     const c = document.createElement('canvas');
     renderCard(c, edition, { photo, name, stack, identity, pan, zoom }, 2);
     return c.toDataURL('image/png');
@@ -53,10 +69,10 @@ export default function Result({ edition, rawPhoto, duoPhoto, name, stack, ident
     }, 500);
   }, []);
 
-  const download = useCallback(() => {
+  const download = useCallback(async () => {
     setBusy('download');
     try {
-      const dataUrl = getCardDataUrl();
+      const dataUrl = await getCardDataUrl();
       const filename = `hh-goa-2026-${edition.id}-${slug(name)}.png`;
       triggerDownload(dataUrl, filename);
     } catch (e) {
@@ -64,7 +80,7 @@ export default function Result({ edition, rawPhoto, duoPhoto, name, stack, ident
     } finally {
       setBusy(null);
     }
-  }, [edition, getCardDataUrl, name, triggerDownload]);
+  }, [edition.id, getCardDataUrl, name, triggerDownload]);
 
   const downloadPFP = useCallback(() => {
     try {
@@ -78,18 +94,18 @@ export default function Result({ edition, rawPhoto, duoPhoto, name, stack, ident
     }
   }, [identity, name, pan, photo, stack, triggerDownload, zoom]);
 
-  const share = useCallback(() => {
+  const share = useCallback(async () => {
     setBusy('share');
 
-    // 1. Immediately trigger high-res card PNG download
-    download();
-
-    // 2. Immediately open X Intent on click (instant redirect, zero popup delay)
+    // 1. Immediately open X Intent on click (instant redirect, zero popup delay)
     const appUrl = 'https://hh-goa-id-delta.vercel.app/';
     const caption = `Stamped as a builder for Hacker Goa House 2026 🌴🚀\n\nBuilding in Goa, shipping from paradise.\n\nGet your card: ${appUrl}\n\n${EVENT.hashtag} #HHGoa2026`;
     const intentUrl = `https://x.com/intent/tweet?text=${encodeURIComponent(caption)}`;
 
     window.open(intentUrl, '_blank', 'noopener');
+
+    // 2. Trigger exact card PNG download to device
+    await download();
     setBusy(null);
   }, [download]);
 
