@@ -65,16 +65,16 @@ export default function Result({ edition, rawPhoto, duoPhoto, name, stack, ident
 
   const share = async () => {
     setBusy('share');
-    // 1. Save PNG to device so user can attach to tweet
-    await download();
 
-    // 2. Open X Intent directly with high-reach caption
-    const caption = `Stamped as a builder for Hacker Goa House 2026 🌴🚀\n\nBuilding in Goa, shipping from paradise.\n\n${EVENT.hashtag} #HHGoa2026`;
-    const cleanId = identity.builderId.replace(/[^a-zA-Z0-9]/g, '');
-    const pageUrl = `${window.location.origin}/p/${cleanId}?name=${encodeURIComponent(name || 'a builder')}&e=${edition.id}`;
-    const intentUrl = `https://x.com/intent/tweet?text=${encodeURIComponent(caption)}&url=${encodeURIComponent(pageUrl)}`;
+    // 1. Open X Intent immediately on click (instant, zero popup delay)
+    const appUrl = 'https://hh-goa-id-delta.vercel.app/';
+    const caption = `Stamped as a builder for Hacker Goa House 2026 🌴🚀\n\nBuilding in Goa, shipping from paradise.\n\nGet your card: ${appUrl}\n\n${EVENT.hashtag} #HHGoa2026`;
+    const intentUrl = `https://x.com/intent/tweet?text=${encodeURIComponent(caption)}`;
 
     window.open(intentUrl, '_blank', 'noopener');
+
+    // 2. Download high-res PNG card to user's device to attach in X composer
+    await download();
     setBusy(null);
   };
 
