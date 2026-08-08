@@ -33,63 +33,65 @@ export default function Result({ edition, rawPhoto, duoPhoto, name, stack, ident
 
   const photo = fullColor ? rawPhoto : duoPhoto;
 
-  const buildBlob = useCallback(async () => {
+  const getCardDataUrl = useCallback(() => {
     const c = document.createElement('canvas');
     renderCard(c, edition, { photo, name, stack, identity, pan, zoom }, 2);
-    return new Promise<Blob>((resolve) => c.toBlob((b) => resolve(b as Blob), 'image/png'));
+    return c.toDataURL('image/png');
   }, [edition, photo, name, stack, identity, pan, zoom]);
 
-  const download = async () => {
+  const triggerDownload = useCallback((dataUrl: string, filename: string) => {
+    const a = document.createElement('a');
+    a.href = dataUrl;
+    a.download = filename;
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+      if (document.body.contains(a)) {
+        document.body.removeChild(a);
+      }
+    }, 500);
+  }, []);
+
+  const download = useCallback(() => {
     setBusy('download');
     try {
-      const blob = await buildBlob();
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `hh-goa-2026-${edition.id}-${slug(name)}.png`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      setTimeout(() => URL.revokeObjectURL(url), 10000);
+      const dataUrl = getCardDataUrl();
+      const filename = `hh-goa-2026-${edition.id}-${slug(name)}.png`;
+      triggerDownload(dataUrl, filename);
     } catch (e) {
       console.error('Download error:', e);
     } finally {
       setBusy(null);
     }
-  };
+  }, [edition, getCardDataUrl, name, triggerDownload]);
 
-  const downloadPFP = async () => {
+  const downloadPFP = useCallback(() => {
     try {
       const c = document.createElement('canvas');
       renderPFP(c, { photo, name, stack, identity, pan, zoom }, 2);
-      const blob: Blob = await new Promise((resolve) => c.toBlob((b) => resolve(b as Blob), 'image/png'));
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `hh-goa-2026-pfp-${slug(name)}.png`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      setTimeout(() => URL.revokeObjectURL(url), 10000);
+      const dataUrl = c.toDataURL('image/png');
+      const filename = `hh-goa-2026-pfp-${slug(name)}.png`;
+      triggerDownload(dataUrl, filename);
     } catch (e) {
       console.error('PFP download error:', e);
     }
-  };
+  }, [identity, name, pan, photo, stack, triggerDownload, zoom]);
 
-  const share = async () => {
+  const share = useCallback(() => {
     setBusy('share');
 
-    // 1. Open X Intent immediately on click (instant, zero popup delay)
+    // 1. Immediately trigger high-res card PNG download
+    download();
+
+    // 2. Immediately open X Intent on click (instant redirect, zero popup delay)
     const appUrl = 'https://hh-goa-id-delta.vercel.app/';
     const caption = `Stamped as a builder for Hacker Goa House 2026 🌴🚀\n\nBuilding in Goa, shipping from paradise.\n\nGet your card: ${appUrl}\n\n${EVENT.hashtag} #HHGoa2026`;
     const intentUrl = `https://x.com/intent/tweet?text=${encodeURIComponent(caption)}`;
 
     window.open(intentUrl, '_blank', 'noopener');
-
-    // 2. Download high-res PNG card to user's device to attach in X composer
-    await download();
     setBusy(null);
-  };
+  }, [download]);
 
   const onPointerDown = (e: React.PointerEvent) => {
     if (!reposition) return;
