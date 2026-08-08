@@ -7,11 +7,22 @@ export async function generateMetadata(props: PageProps<'/p/[id]'>): Promise<Met
   const img = typeof sp.img === 'string' ? sp.img : '';
   const name = typeof sp.name === 'string' ? sp.name : 'a builder';
   const title = `${name}'s HH Goa 2026 builder card`;
+  const description = 'Stamped for HH Goa 2026. #FrameInGoa';
   return {
     title,
-    description: 'Stamped for HH Goa 2026. #FrameInGoa',
-    openGraph: { title, images: img ? [img] : [], type: 'website' },
-    twitter: { card: 'summary_large_image', title, images: img ? [img] : [] },
+    description,
+    openGraph: {
+      title,
+      description,
+      type: 'website',
+      images: img ? [{ url: img, width: 1600, height: 2000, alt: title }] : [],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: img ? [img] : [],
+    },
   };
 }
 

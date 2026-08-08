@@ -2,9 +2,8 @@
 
 import { useCallback, useRef, useState } from 'react';
 import { Download, Share2, RefreshCw, LayoutGrid, Move, Palette, type LucideIcon } from 'lucide-react';
-import html2canvas from 'html2canvas';
 import CardCanvas from './CardCanvas';
-import { renderPFP, type EditionConfig } from '@/lib/render/engine';
+import { renderCard, renderPFP, type EditionConfig } from '@/lib/render/engine';
 import { EVENT } from '@/lib/tokens';
 import type { Identity } from '@/lib/identity';
 
@@ -29,26 +28,16 @@ export default function Result({ edition, rawPhoto, duoPhoto, name, stack, ident
   const [reposition, setReposition] = useState(false);
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
-  const cardContainerRef = useRef<HTMLDivElement>(null);
   const dragState = useRef<{ startX: number; startY: number; panX: number; panY: number } | null>(null);
   const [busy, setBusy] = useState<'download' | 'share' | null>(null);
 
   const photo = fullColor ? rawPhoto : duoPhoto;
 
   const buildBlob = useCallback(async () => {
-    if (cardContainerRef.current) {
-      try {
-        const canvas = await html2canvas(cardContainerRef.current, { scale: 2.5, useCORS: true, backgroundColor: null });
-        return new Promise<Blob>((resolve) => canvas.toBlob((b) => resolve(b as Blob), 'image/png'));
-      } catch {
-        // fallback canvas
-      }
-    }
     const c = document.createElement('canvas');
-    c.width = 800;
-    c.height = 1000;
+    renderCard(c, edition, { photo, name, stack, identity, pan, zoom }, 2);
     return new Promise<Blob>((resolve) => c.toBlob((b) => resolve(b as Blob), 'image/png'));
-  }, []);
+  }, [edition, photo, name, stack, identity, pan, zoom]);
 
   const download = async () => {
     setBusy('download');
@@ -156,7 +145,7 @@ export default function Result({ edition, rawPhoto, duoPhoto, name, stack, ident
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
       >
-        <div ref={cardContainerRef} className="h-full w-full overflow-hidden rounded-2xl" style={{ boxShadow: '0 24px 48px rgba(11,47,31,.35)' }}>
+        <div className="h-full w-full overflow-hidden rounded-2xl" style={{ boxShadow: '0 24px 48px rgba(11,47,31,.35)' }}>
           <CardCanvas
             edition={edition}
             photo={photo}
