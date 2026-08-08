@@ -75,7 +75,8 @@ export default function Result({ edition, rawPhoto, duoPhoto, name, stack, ident
     try {
       const file = new File([blob], `hh-goa-2026-${edition.id}.png`, { type: 'image/png' });
       const nav = navigator as Navigator & { canShare?: (data: { files: File[] }) => boolean };
-      if (nav.canShare?.({ files: [file] })) {
+      const isMobile = /Android|iPhone|iPad|iPod|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      if (isMobile && nav.canShare?.({ files: [file] })) {
         xTab?.close();
         await navigator.share({ files: [file], text: caption });
         setBusy(null);
