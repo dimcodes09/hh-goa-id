@@ -1,70 +1,120 @@
 import { COLOR, FONT, SAFE_MARGIN } from '../tokens';
-import { drawSunRays, drawStar4pt } from '../illustrations';
+import { drawSunRays, drawPalmCluster, drawLanyardClip, drawApprovedStamp, drawSignpost, drawFrameInGoaBanner, drawGoaBeachScenery } from '../illustrations';
 import { drawPaperGrain } from '../halftone';
 import { offsetText, monoText, govaMark, pinkSeal, placePhoto, roundRect, chip, qrMark, type EditionConfig, displayName, displayStack } from '../render/engine';
 
 export const credential: EditionConfig = {
   id: 'credential',
   label: 'CREDENTIAL',
-  copy: 'CREDENTIAL — event badge, cream stock',
+  copy: 'CREDENTIAL — official lanyard badge, cream stock',
   stock: 'paper',
   swatchBg: COLOR.cream,
   swatchFg: COLOR.green,
-  aperture: { shape: 'circle', x: 0.5 - 0.19, y: 0.3, w: 0.38, h: 0.38 * (1600 / 2000) },
+  aperture: { shape: 'circle', x: 0.08, y: 0.28, w: 0.38, h: 0.38 * (1600 / 2000) },
   draw(rc) {
     const { ctx, w, h, name, stack, identity } = rc;
+
+    // Card background
     ctx.fillStyle = COLOR.cream;
     roundRect(ctx, 0, 0, w, h, w * 0.03);
     ctx.fill();
-    drawPaperGrain(ctx, 0, 0, w, h, 33, 0.045);
+    drawPaperGrain(ctx, 0, 0, w, h, 33, 0.04);
 
-    const headerH = h * 0.16;
-    ctx.save();
-    roundRect(ctx, 0, 0, w, h, w * 0.03);
-    ctx.clip();
-    ctx.fillStyle = COLOR.green;
-    ctx.fillRect(0, 0, w, headerH);
-    drawSunRays(ctx, w * 0.5, -headerH * 0.3, headerH * 0.9, { ink: 'rgba(255,212,0,.14)', light: 'rgba(255,212,0,.06)' }, 16);
-    ctx.restore();
-
-    ctx.textAlign = 'center';
-    ctx.font = `900 46px ${FONT.display}`;
-    ctx.fillStyle = COLOR.yellow;
-    ctx.fillText('HACKER', w * 0.5 - 108, headerH * 0.46);
-    ctx.fillText('HOUSE', w * 0.5 + 130, headerH * 0.46);
-    govaMark(ctx, w * 0.5, headerH * 0.48, 44, -6, 'center');
-    monoText(ctx, 'BUILDER CREDENTIAL / HH GOA 2026', w * 0.5, headerH * 0.78, { size: 13, color: COLOR.cream, align: 'center', weight: '400', tracking: 2 });
-
-    placePhoto(rc, credential.aperture, COLOR.creamShade, COLOR.pink, COLOR.ink);
-    chip(ctx, credential.aperture.x * w + credential.aperture.w * w + 6, credential.aperture.y * h + 4, "LET'S BUILD!", {
-      bg: COLOR.yellow,
-      fg: COLOR.ink,
-      rot: -8,
-      size: 13,
-    });
-
-    const nameY = credential.aperture.y * h + credential.aperture.h * h + 90;
-    offsetText(ctx, displayName(name), SAFE_MARGIN, nameY, { font: FONT.display, size: 76, color: COLOR.ink, align: 'left' });
-
-    ctx.strokeStyle = COLOR.ink;
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    ctx.moveTo(SAFE_MARGIN, nameY + 26);
-    ctx.lineTo(w - SAFE_MARGIN, nameY + 26);
+    // Card Outer Border
+    ctx.strokeStyle = COLOR.green;
+    ctx.lineWidth = 6;
+    roundRect(ctx, 8, 8, w - 16, h - 16, w * 0.025);
     ctx.stroke();
 
-    monoText(ctx, displayStack(stack), SAFE_MARGIN, nameY + 58, { size: 15, color: COLOR.ink, weight: '400', tracking: 1 });
+    // Lanyard Clip at top
+    drawLanyardClip(ctx, w * 0.5, 0, 1);
 
-    monoText(ctx, 'BUILDER CLASS', SAFE_MARGIN, nameY + 108, { size: 12, color: 'rgba(11,47,31,.5)', tracking: 2 });
-    offsetText(ctx, identity.cls, SAFE_MARGIN, nameY + 148, { font: FONT.display, size: 40, color: COLOR.pink, shadow: 'rgba(11,47,31,.15)', offset: 3, align: 'left' });
+    // Top Header Lockup: HACKER GOA HOUSE
+    ctx.save();
+    ctx.textAlign = 'center';
+    ctx.font = `900 48px ${FONT.display}`;
+    ctx.fillStyle = COLOR.green;
+    ctx.fillText('HACKER', w * 0.5 - 130, 80);
+    ctx.fillText('HOUSE', w * 0.5 + 130, 80);
+    govaMark(ctx, w * 0.5, 82, 46, -6, 'center');
+    monoText(ctx, '✦ BUILD IN GOA, SHIP FROM PARADISE ✦', w * 0.5, 112, { size: 12, color: COLOR.pink, align: 'center', weight: '700', tracking: 2 });
+    ctx.restore();
 
-    drawStar4pt(ctx, w - SAFE_MARGIN - 30, nameY + 40, 16, COLOR.yellowDeep, 12);
-    qrMark(ctx, SAFE_MARGIN, nameY + 175, 96, identity.builderId, COLOR.ink);
-    monoText(ctx, 'SCAN TO', SAFE_MARGIN + 108, nameY + 205, { size: 10, color: 'rgba(11,47,31,.5)', tracking: 1 });
-    monoText(ctx, 'RSVP', SAFE_MARGIN + 108, nameY + 224, { size: 15, color: COLOR.ink, weight: '700', tracking: 1 });
+    // Photo Section (Left)
+    placePhoto(rc, credential.aperture, COLOR.yellow, COLOR.pink, COLOR.green);
+    chip(ctx, credential.aperture.x * w + 45, credential.aperture.y * h + credential.aperture.h * h - 10, 'BUILDER', {
+      bg: COLOR.pink,
+      fg: COLOR.cream,
+      rot: -6,
+      size: 14,
+    });
 
-    monoText(ctx, `${identity.builderId} · ED 01/∞ · 28–31 OCT · GOA, IN`, w / 2, h - SAFE_MARGIN + 8, { size: 13, color: COLOR.ink, align: 'center' });
+    // Right Details Panel
+    const rightX = w * 0.5;
+    let detailY = 175;
 
-    pinkSeal(ctx, w - SAFE_MARGIN - 74, nameY + 100, 82, -8, ['HH', 'GOA']);
+    // Name
+    offsetText(ctx, displayName(name), rightX, detailY, { font: FONT.display, size: 52, color: COLOR.green, align: 'left' });
+    detailY += 42;
+    monoText(ctx, `✦ ${displayStack(stack)} ✦`, rightX, detailY, { size: 13, color: COLOR.pink, weight: '700', tracking: 1 });
+
+    // Divider Line
+    ctx.strokeStyle = 'rgba(11,47,31,0.2)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(rightX, detailY + 12);
+    ctx.lineTo(w - SAFE_MARGIN, detailY + 12);
+    ctx.stroke();
+
+    detailY += 40;
+    // BUILDER CLASS
+    monoText(ctx, '🌴 BUILDER CLASS', rightX, detailY, { size: 11, color: COLOR.greenMid, tracking: 1 });
+    monoText(ctx, identity.cls.toUpperCase(), rightX, detailY + 22, { size: 15, color: COLOR.pink, weight: '700', tracking: 1 });
+
+    detailY += 56;
+    // SKILLS
+    monoText(ctx, '💻 SKILLS / STACK', rightX, detailY, { size: 11, color: COLOR.greenMid, tracking: 1 });
+    monoText(ctx, displayStack(stack), rightX, detailY + 22, { size: 14, color: COLOR.green, weight: '700', tracking: 1 });
+
+    detailY += 56;
+    // TEAM VIBES
+    monoText(ctx, '✉️ TEAM VIBES', rightX, detailY, { size: 11, color: COLOR.greenMid, tracking: 1 });
+    monoText(ctx, 'BUILD • SHIP • REPEAT', rightX, detailY + 22, { size: 14, color: COLOR.pink, weight: '700', tracking: 1 });
+
+    // Lower Section: Builder ID & QR Code
+    const lowerY = h * 0.68;
+    roundRect(ctx, SAFE_MARGIN, lowerY, w * 0.42, 100, 10);
+    ctx.fillStyle = COLOR.green;
+    ctx.fill();
+
+    monoText(ctx, 'BUILDER ID', SAFE_MARGIN + 16, lowerY + 28, { size: 11, color: COLOR.yellow, weight: '700', tracking: 2 });
+    monoText(ctx, identity.builderId, SAFE_MARGIN + 16, lowerY + 62, { size: 20, color: COLOR.cream, weight: '700', tracking: 1 });
+
+    monoText(ctx, 'VENUE: GOA, INDIA', SAFE_MARGIN + 16, lowerY + 84, { size: 10, color: COLOR.pink, tracking: 1 });
+    monoText(ctx, 'DATE: 28–31 OCT 2026', SAFE_MARGIN + 16, lowerY + 96, { size: 10, color: COLOR.cream, tracking: 1 });
+
+    // QR Code
+    qrMark(ctx, w * 0.52, lowerY, 96, identity.builderId, COLOR.green);
+    monoText(ctx, '✦ SCAN TO EXPLORE ✦', w * 0.52, lowerY + 114, { size: 10, color: COLOR.pink, tracking: 1 });
+
+    // Signpost
+    drawSignpost(ctx, SAFE_MARGIN + 35, lowerY + 130, 0.7);
+
+    // Palm Tree
+    drawPalmCluster(ctx, w * 0.82, h - 80, { ink: COLOR.green, light: COLOR.yellow }, 2, 0.75);
+
+    // Approved Rubber Stamp
+    drawApprovedStamp(ctx, w * 0.78, lowerY + 50, 44, -12);
+
+    // Bottom Goa Beach Scenery
+    drawGoaBeachScenery(ctx, w, h, {
+      skyColor: COLOR.cream,
+      sunColor: COLOR.yellow,
+      sandColor: '#e5ca80',
+      waterColor: COLOR.green,
+    });
+
+    // Bottom Banner
+    drawFrameInGoaBanner(ctx, w * 0.5, h - 35, w * 0.85, 38);
   },
 };

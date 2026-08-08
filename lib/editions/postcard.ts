@@ -1,7 +1,7 @@
 import { COLOR, FONT, SAFE_MARGIN } from '../tokens';
-import { drawWaveTriple, drawPalmCluster, drawPerforatedFrame, drawStar4pt } from '../illustrations';
+import { drawWaveTriple, drawPalmCluster, drawPerforatedFrame, drawStar4pt, drawApprovedStamp, drawSignpost, drawFrameInGoaBanner, drawGoaBeachScenery } from '../illustrations';
 import { drawPaperGrain } from '../halftone';
-import { offsetText, monoText, govaMark, pinkSeal, placePhoto, roundRect, type EditionConfig, displayName } from '../render/engine';
+import { offsetText, monoText, govaMark, pinkSeal, placePhoto, roundRect, qrMark, type EditionConfig, displayName, displayStack } from '../render/engine';
 
 export const postcard: EditionConfig = {
   id: 'postcard',
@@ -10,58 +10,112 @@ export const postcard: EditionConfig = {
   stock: 'paper',
   swatchBg: COLOR.cream,
   swatchFg: COLOR.ink,
-  aperture: { shape: 'arch', x: 0.1, y: 0.11, w: 0.5, h: 0.42, radius: 0.03 },
+  aperture: { shape: 'circle', x: 0.08, y: 0.24, w: 0.38, h: 0.38 * (1600 / 2000) },
   draw(rc) {
     const { ctx, w, h, name, stack, identity } = rc;
+
+    // Card background
     ctx.fillStyle = COLOR.cream;
     roundRect(ctx, 0, 0, w, h, w * 0.025);
     ctx.fill();
-    drawPaperGrain(ctx, 0, 0, w, h, 21, 0.045);
+    drawPaperGrain(ctx, 0, 0, w, h, 24, 0.04);
+
+    // Double Border
     ctx.save();
-    roundRect(ctx, SAFE_MARGIN * 0.4, SAFE_MARGIN * 0.4, w - SAFE_MARGIN * 0.8, h - SAFE_MARGIN * 0.8, w * 0.02);
-    ctx.lineWidth = 3;
-    ctx.strokeStyle = 'rgba(11,47,31,.18)';
+    roundRect(ctx, 10, 10, w - 20, h - 20, w * 0.02);
+    ctx.lineWidth = 4;
+    ctx.strokeStyle = COLOR.green;
     ctx.stroke();
     ctx.restore();
 
-    monoText(ctx, 'GOA, INDIA', SAFE_MARGIN, SAFE_MARGIN + 20, { size: 15, color: COLOR.greenMid, tracking: 2 });
-    monoText(ctx, 'POST CARD', SAFE_MARGIN, SAFE_MARGIN + 48, { size: 22, color: COLOR.ink, weight: '700', tracking: 3 });
-
-    // stamp corner, top right
-    const sx = w - SAFE_MARGIN - 150;
-    const sy = SAFE_MARGIN;
-    drawPerforatedFrame(ctx, sx, sy, 150, 130, COLOR.greenMid, 16, 5);
+    // Top Right Postage Stamp
+    const sx = w - 170;
+    const sy = 24;
+    drawPerforatedFrame(ctx, sx, sy, 140, 120, COLOR.greenMid, 16, 5);
     ctx.save();
-    ctx.beginPath();
-    roundRect(ctx, sx + 14, sy + 14, 122, 102, 4);
+    roundRect(ctx, sx + 12, sy + 12, 116, 96, 4);
     ctx.clip();
     ctx.fillStyle = COLOR.green;
-    ctx.fillRect(sx + 14, sy + 14, 122, 102);
-    drawStar4pt(ctx, sx + 75, sy + 65, 34, COLOR.yellow, 8);
+    ctx.fillRect(sx + 12, sy + 12, 116, 96);
+    drawPalmCluster(ctx, sx + 30, sy + 100, { ink: COLOR.yellow, light: COLOR.pink }, 2, 0.45);
+    drawStar4pt(ctx, sx + 100, sy + 35, 20, COLOR.yellow, 8);
+    monoText(ctx, 'GOA INDIA', sx + 20, sy + 30, { size: 10, color: COLOR.cream, weight: '700', tracking: 1 });
     ctx.restore();
-    monoText(ctx, 'AIR MAIL', sx + 14, sy + 148, { size: 9, color: COLOR.greenMid, tracking: 1 });
 
-    placePhoto(rc, postcard.aperture, COLOR.creamShade, COLOR.green, COLOR.ink);
+    // Top Airmail Markings
+    monoText(ctx, 'GOA, INDIA', SAFE_MARGIN + 10, 50, { size: 14, color: COLOR.greenMid, tracking: 2 });
 
-    const nameX = SAFE_MARGIN;
-    let nameY = h * 0.62;
-    offsetText(ctx, displayName(name), nameX, nameY, { font: FONT.display, size: 108, color: COLOR.ink, align: 'left' });
-    nameY += 70;
-    if (ctx.measureText(displayName(name)).width > w - SAFE_MARGIN * 2) nameY += 30;
+    // Main Header: HACKER GOA HOUSE
+    ctx.save();
+    ctx.textAlign = 'center';
+    ctx.font = `900 52px ${FONT.display}`;
+    ctx.fillStyle = COLOR.yellowDeep;
+    ctx.fillText('HACKER', w * 0.4 - 10, 105);
+    ctx.fillText('HOUSE', w * 0.4 + 230, 105);
+    govaMark(ctx, w * 0.4 + 110, 107, 48, -6, 'center');
+    monoText(ctx, '✦ BUILD IN GOA, SHIP FROM PARADISE ✦', w * 0.4 + 110, 138, { size: 11, color: COLOR.pink, align: 'center', weight: '700', tracking: 2 });
+    ctx.restore();
 
-    monoText(ctx, `IS BUILDING IN`, nameX, nameY + 46, { size: 16, color: COLOR.greenMid, tracking: 2 });
-    govaMark(ctx, nameX + 250, nameY + 48, 34, -5);
-    monoText(ctx, displayStackShort(stack), nameX, nameY + 78, { size: 13, color: COLOR.ink, tracking: 1 });
+    // Photo Section (Left)
+    placePhoto(rc, postcard.aperture, COLOR.yellow, COLOR.pink, COLOR.green);
 
-    drawPalmCluster(ctx, w * 0.58, h - SAFE_MARGIN - 30, { ink: COLOR.green, light: COLOR.lime }, 3, 0.7);
-    drawWaveTriple(ctx, SAFE_MARGIN, h - SAFE_MARGIN - 26, w - SAFE_MARGIN * 2, COLOR.teal, 4);
+    // Right Details Panel
+    const rightX = w * 0.5;
+    let detailY = 175;
 
-    monoText(ctx, `${identity.builderId} · 28–31 OCT 2026`, SAFE_MARGIN, h - SAFE_MARGIN + 12, { size: 12, color: COLOR.ink });
+    // Name
+    offsetText(ctx, displayName(name), rightX, detailY, { font: FONT.display, size: 54, color: COLOR.ink, align: 'left' });
+    detailY += 42;
+    monoText(ctx, `✦ ${displayStack(stack)} ✦`, rightX, detailY, { size: 13, color: COLOR.pink, weight: '700', tracking: 1 });
 
-    pinkSeal(ctx, w - SAFE_MARGIN - 90, h - SAFE_MARGIN - 60, 76, 12, ['HH GOA', identity.builderId.replace('#HH-GOA-', '')]);
+    // Divider Line
+    ctx.strokeStyle = 'rgba(11,47,31,0.2)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(rightX, detailY + 12);
+    ctx.lineTo(w - SAFE_MARGIN, detailY + 12);
+    ctx.stroke();
+
+    detailY += 42;
+    monoText(ctx, '🌴 BUILDER CLASS', rightX, detailY, { size: 11, color: COLOR.greenMid, tracking: 1 });
+    monoText(ctx, identity.cls.toUpperCase(), rightX, detailY + 22, { size: 15, color: COLOR.green, weight: '700', tracking: 1 });
+
+    detailY += 56;
+    monoText(ctx, '💻 SKILLS / STACK', rightX, detailY, { size: 11, color: COLOR.greenMid, tracking: 1 });
+    monoText(ctx, displayStack(stack), rightX, detailY + 22, { size: 14, color: COLOR.ink, weight: '700', tracking: 1 });
+
+    detailY += 56;
+    monoText(ctx, '✉️ TEAM VIBES', rightX, detailY, { size: 11, color: COLOR.greenMid, tracking: 1 });
+    monoText(ctx, 'BUILD • SHIP • REPEAT', rightX, detailY + 22, { size: 14, color: COLOR.pink, weight: '700', tracking: 1 });
+
+    // Signpost Left
+    drawSignpost(ctx, SAFE_MARGIN + 30, h * 0.64, 0.7);
+
+    // Lower Section: Builder ID & QR Code
+    const lowerY = h * 0.66;
+    roundRect(ctx, w * 0.28, lowerY, w * 0.38, 96, 10);
+    ctx.fillStyle = COLOR.green;
+    ctx.fill();
+
+    monoText(ctx, 'BUILDER ID', w * 0.28 + 16, lowerY + 28, { size: 11, color: COLOR.yellow, weight: '700', tracking: 2 });
+    monoText(ctx, identity.builderId, w * 0.28 + 16, lowerY + 60, { size: 19, color: COLOR.cream, weight: '700', tracking: 1 });
+
+    monoText(ctx, 'VENUE: GOA, INDIA', w * 0.28 + 16, lowerY + 82, { size: 10, color: COLOR.pink, tracking: 1 });
+    monoText(ctx, 'DATE: 28–31 OCT 2026', w * 0.28 + 16, lowerY + 94, { size: 10, color: COLOR.cream, tracking: 1 });
+
+    // QR Code
+    qrMark(ctx, w * 0.69, lowerY, 96, identity.builderId, COLOR.ink);
+    monoText(ctx, 'Scan me!', w * 0.69, lowerY + 114, { size: 12, color: COLOR.ink, tracking: 1 });
+
+    // Bottom Goa Beach Scenery
+    drawGoaBeachScenery(ctx, w, h, {
+      skyColor: COLOR.cream,
+      sunColor: COLOR.yellow,
+      sandColor: '#e5ca80',
+      waterColor: COLOR.green,
+    });
+
+    // Bottom Banner
+    drawFrameInGoaBanner(ctx, w * 0.5, h - 35, w * 0.85, 38);
   },
 };
-
-function displayStackShort(stack: string) {
-  return stack.trim() ? stack.trim().toUpperCase() : 'FULL-STACK BUILDER';
-}

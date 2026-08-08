@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useRef } from 'react';
 import gsap from 'gsap';
 import { COLOR, EVENT } from '@/lib/tokens';
-import { EDITIONS_LIST } from '@/lib/editions';
 import { drawPalmCluster } from '@/lib/illustrations';
 
 function hexToRgb(hex: string) {
@@ -251,23 +250,6 @@ export default function Landing({ onStart }: { onStart: () => void }) {
           </svg>
           GET STAMPED →
         </button>
-        <a href="#editions" className="hh-sub mt-4 font-[var(--font-mono)] text-[12px] tracking-[.06em] text-[var(--teal)]">
-          see the editions ↓
-        </a>
-      </div>
-
-      <div id="editions" className="hh-swatches relative z-10 flex flex-wrap justify-center gap-2 px-4 pb-8">
-        {EDITIONS_LIST.map((ed, i) => (
-          <div
-            key={ed.id}
-            className="flex h-[54px] w-[42px] flex-col items-center justify-end rounded-md border pb-1"
-            style={{ background: ed.swatchBg, borderColor: i === 0 ? 'var(--yellow)' : 'rgba(251,243,222,.25)', borderWidth: i === 0 ? 2 : 1 }}
-          >
-            <span className="font-[var(--font-mono)] text-[7px] tracking-[.06em]" style={{ color: ed.swatchFg }}>
-              {String(i + 1).padStart(2, '0')}
-            </span>
-          </div>
-        ))}
       </div>
 
       <DetailStrip />
@@ -276,33 +258,10 @@ export default function Landing({ onStart }: { onStart: () => void }) {
 }
 
 function DetailStrip() {
-  // deterministic scatter of halftone dots in the corner — same dot-system as everywhere else, no CSS gradients
-  const dots = useMemo(() => {
-    let s = 91;
-    const rand = () => {
-      s = (s * 16807) % 2147483647;
-      return (s % 1000) / 1000;
-    };
-    return Array.from({ length: 46 }, () => ({
-      top: rand() * 78,
-      right: rand() * 60,
-      size: 3 + rand() * 5,
-    }));
-  }, []);
-
   return (
-    <div className="hh-swatches relative z-10 overflow-hidden px-6 py-6 sm:px-10 sm:py-8" style={{ background: 'var(--lime)' }}>
-      <div className="pointer-events-none absolute inset-0">
-        {dots.map((d, i) => (
-          <span
-            key={i}
-            className="absolute rounded-[1px]"
-            style={{ top: `${d.top}%`, right: `${d.right}%`, width: d.size, height: d.size, background: 'var(--green)' }}
-          />
-        ))}
-      </div>
-      <div className="relative flex flex-wrap items-center gap-x-2 gap-y-1 font-[var(--font-mono)] text-[12px] font-bold tracking-[.02em] text-[var(--ink)] sm:text-[14px]">
-        <span style={{ color: 'var(--teal)' }}>{EVENT.hashtag}</span>
+    <div className="hh-swatches relative z-10 flex flex-col items-center justify-center text-center px-6 py-8 sm:px-10 sm:py-10">
+      <div className="relative flex flex-wrap items-center justify-center gap-x-2 gap-y-1 font-[var(--font-mono)] text-[12px] font-bold tracking-[.02em] text-[var(--cream)] sm:text-[14px]">
+        <span style={{ color: 'var(--yellow)' }}>{EVENT.hashtag}</span>
         <span className="opacity-50">•</span>
         <span>HH GOA {EVENT.year}</span>
         <span className="opacity-50">•</span>
@@ -310,7 +269,7 @@ function DetailStrip() {
         <span className="opacity-50">•</span>
         <span>{EVENT.location}</span>
       </div>
-      <div className="relative mt-1 font-[var(--font-mono)] text-[11px] text-[var(--ink)]/60">
+      <div className="relative mt-2 font-[var(--font-mono)] text-[11px] text-[var(--cream)]/70">
         Built for HH Goa {EVENT.year} builders &amp; attendees.
       </div>
     </div>

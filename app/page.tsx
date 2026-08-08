@@ -1,9 +1,10 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Loader from '@/components/Loader';
 import Landing from '@/components/Landing';
 import Upload from '@/components/Upload';
+import RackLoader from '@/components/RackLoader';
 import Rack from '@/components/Rack';
 import Reveal from '@/components/Reveal';
 import Result from '@/components/Result';
@@ -12,7 +13,7 @@ import { makeIdentity } from '@/lib/identity';
 import { EDITIONS } from '@/lib/editions';
 import { COLOR, type EditionId } from '@/lib/tokens';
 
-type Step = 'loading' | 'landing' | 'upload' | 'rack' | 'reveal' | 'result';
+type Step = 'loading' | 'landing' | 'upload' | 'transition' | 'rack' | 'reveal' | 'result';
 
 function cloneCanvas(src: HTMLCanvasElement) {
   const c = document.createElement('canvas');
@@ -72,9 +73,11 @@ export default function Home() {
           stack={stack}
           setStack={setStack}
           onBack={() => setStep('landing')}
-          onNext={() => setStep('rack')}
+          onNext={() => setStep('transition')}
         />
       )}
+
+      {step === 'transition' && <RackLoader onDone={() => setStep('rack')} />}
 
       {step === 'rack' && (
         <Rack

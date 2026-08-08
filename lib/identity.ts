@@ -1,4 +1,4 @@
-// Deterministic identity — same name+stack always issues the same builder card. No AI call, no backend.
+// Identity generator with cool GenZ / GenAlpha builder classes & unique builder ID.
 
 function hashStr(s: string) {
   let h = 2166136261;
@@ -21,14 +21,35 @@ function mulberry32(seed: number) {
 }
 
 const BUILDER_CLASSES = [
-  'TERMINAL WIZARD', 'CHAOS ENGINEER', 'MIDNIGHT SHIPPER', 'YAK SHAVER',
-  'STACK NECROMANCER', 'PROD WHISPERER', 'CACHE INVALIDATOR', 'BUG WHISPERER',
-  'FULL-SEND STACK', 'CTRL+Z SURVIVOR', 'DEMO DAY GAMBLER', 'API ALCHEMIST',
+  'MAX AURA SHIPPER',
+  'GOATED STACK GOD',
+  'NO CAP ARCHITECT',
+  'SIGMA PROTOCOL DEV',
+  'MAIN CHARACTER CODER',
+  'RIZZ ENGINEER',
+  '0X AURA NINJA',
+  'TERMINAL WIZARD',
+  'CHAOS ALCHEMIST',
+  'PROD WHISPERER',
+  'FULL-SEND MATRIX',
+  'LOCK IN SPECIALIST',
+  'MIDNIGHT SHIPPER',
+  'GOA BEACH HACKER',
+  'YAK SHAVER',
+  'BUG WHISPERER',
+  'API ALCHEMIST',
+  'DEMO DAY GAMBLER',
 ];
 
 const CURRENTLY = [
-  'BUILDING & TANNING', 'SHIPPING ON VIBES', 'DEBUGGING IN PARADISE', 'AWAKE SINCE PRE-COFFEE',
-  'RUNNING ON COCONUT WATER', 'ONE COMMIT FROM DEMO', 'STILL PARSING THE BRIEF', 'ALREADY OVERSCOPED',
+  'BUILDING & TANNING',
+  'SHIPPING ON VIBES',
+  'DEBUGGING IN PARADISE',
+  'AWAKE SINCE PRE-COFFEE',
+  'RUNNING ON COCONUT WATER',
+  'ONE COMMIT FROM DEMO',
+  'STILL PARSING THE BRIEF',
+  'ALREADY OVERSCOPED',
 ];
 
 export interface Identity {
@@ -39,13 +60,18 @@ export interface Identity {
 }
 
 export function makeIdentity(name: string, stack: string, reroll = 0): Identity {
-  const key = `${name.trim().toUpperCase()}::${stack.trim().toUpperCase()}` || 'ANON::BUILDER';
-  const idSeed = hashStr(key); // builder ID is stable — only the flavour text rerolls
-  const rand = mulberry32(idSeed + reroll * 7919);
-  const num = 1000 + Math.floor(mulberry32(idSeed)() * 8999);
+  const cleanName = name.trim().toUpperCase() || 'BUILDER';
+  const cleanStack = stack.trim().toUpperCase() || 'FULL-STACK';
+  const key = `${cleanName}::${cleanStack}::${reroll * 997}`;
+  const idSeed = hashStr(key);
+  const rand = mulberry32(idSeed + 1337);
+
+  const clsIdx = Math.floor(rand() * BUILDER_CLASSES.length);
+  const num = 1000 + Math.floor(rand() * 8999);
+
   return {
-    builderId: `#HH-GOA-${num}`,
-    cls: BUILDER_CLASSES[Math.floor(rand() * BUILDER_CLASSES.length)],
+    builderId: `#HH26-${num}`,
+    cls: BUILDER_CLASSES[clsIdx],
     currently: CURRENTLY[Math.floor(rand() * CURRENTLY.length)],
     seed: idSeed,
   };

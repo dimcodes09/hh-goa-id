@@ -369,3 +369,244 @@ export function drawQRMark(ctx: CanvasRenderingContext2D, x: number, y: number, 
   finder(0, cells - 3);
   ctx.restore();
 }
+
+/** Lanyard clip & strap slot at the top of event passes. */
+export function drawLanyardClip(ctx: CanvasRenderingContext2D, cx: number, cy: number, scale = 1) {
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.scale(scale, scale);
+
+  // Black woven lanyard strap going up off-card
+  ctx.fillStyle = '#181818';
+  ctx.fillRect(-18, -60, 36, 60);
+
+  // Metal clip ring
+  ctx.strokeStyle = '#666666';
+  ctx.lineWidth = 5;
+  ctx.beginPath();
+  ctx.arc(0, -6, 12, 0, Math.PI * 2);
+  ctx.stroke();
+
+  // Swivel clip hook
+  ctx.fillStyle = '#444444';
+  ctx.beginPath();
+  ctx.arc(0, 0, 8, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Slot hole punched in card
+  ctx.fillStyle = '#111111';
+  ctx.beginPath();
+  ctx.roundRect(-22, 10, 44, 12, 6);
+  ctx.fill();
+
+  ctx.restore();
+}
+
+/** Green circular "APPROVED" rubber stamp seal. */
+export function drawApprovedStamp(ctx: CanvasRenderingContext2D, cx: number, cy: number, r = 42, rot = -12) {
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.rotate((rot * Math.PI) / 180);
+
+  // Outer ring
+  ctx.strokeStyle = '#0d6b46';
+  ctx.lineWidth = 3.5;
+  ctx.beginPath();
+  ctx.arc(0, 0, r, 0, Math.PI * 2);
+  ctx.stroke();
+
+  // Inner dashed ring
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([4, 3]);
+  ctx.beginPath();
+  ctx.arc(0, 0, r - 5, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Text
+  ctx.fillStyle = '#0d6b46';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.font = `900 ${Math.round(r * 0.35)}px sans-serif`;
+  ctx.fillText('APPROVED', 0, 0);
+
+  // Stars
+  ctx.font = `700 ${Math.round(r * 0.2)}px sans-serif`;
+  ctx.fillText('★ ★ ★', 0, -r * 0.55);
+  ctx.fillText('★ ★ ★', 0, r * 0.55);
+
+  ctx.restore();
+}
+
+/** Directional wooden signpost: BUILD, SHIP, REPEAT. */
+export function drawSignpost(ctx: CanvasRenderingContext2D, x: number, y: number, scale = 1) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.scale(scale, scale);
+
+  // Pole
+  ctx.fillStyle = '#8b5a2b';
+  ctx.fillRect(-6, 0, 12, 110);
+
+  // Sign 1: BUILD (Yellow)
+  ctx.fillStyle = '#fbd400';
+  ctx.beginPath();
+  ctx.moveTo(-45, 12);
+  ctx.lineTo(35, 12);
+  ctx.lineTo(45, 24);
+  ctx.lineTo(35, 36);
+  ctx.lineTo(-45, 36);
+  ctx.closePath();
+  ctx.fill();
+  ctx.strokeStyle = '#4a2e12';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  ctx.fillStyle = '#0b2f1f';
+  ctx.font = '900 13px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('BUILD', -2, 28);
+
+  // Sign 2: SHIP (Pink)
+  ctx.fillStyle = '#f2226b';
+  ctx.beginPath();
+  ctx.moveTo(45, 42);
+  ctx.lineTo(-35, 42);
+  ctx.lineTo(-45, 54);
+  ctx.lineTo(-35, 66);
+  ctx.lineTo(45, 66);
+  ctx.closePath();
+  ctx.fill();
+  ctx.strokeStyle = '#4a2e12';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  ctx.fillStyle = '#ffffff';
+  ctx.font = '900 13px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('SHIP', 2, 58);
+
+  // Sign 3: REPEAT (Dark Green)
+  ctx.fillStyle = '#0b2f1f';
+  ctx.beginPath();
+  ctx.moveTo(-45, 72);
+  ctx.lineTo(35, 72);
+  ctx.lineTo(45, 84);
+  ctx.lineTo(35, 96);
+  ctx.lineTo(-45, 96);
+  ctx.closePath();
+  ctx.fill();
+  ctx.strokeStyle = '#fbd400';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  ctx.fillStyle = '#fbd400';
+  ctx.font = '900 12px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('REPEAT', -2, 88);
+
+  ctx.restore();
+}
+
+/** Pink ribbon banner: ✦ #FRAMEINGOA ✦ */
+export function drawFrameInGoaBanner(ctx: CanvasRenderingContext2D, cx: number, cy: number, w: number, h = 38) {
+  ctx.save();
+  ctx.translate(cx, cy);
+
+  ctx.fillStyle = '#f2226b';
+  ctx.beginPath();
+  ctx.roundRect(-w / 2, -h / 2, w, h, 8);
+  ctx.fill();
+
+  ctx.strokeStyle = '#ffffff';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  ctx.fillStyle = '#ffffff';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.font = '900 15px sans-serif';
+  ctx.fillText('✦ #FRAMEINGOA ✦', 0, 1);
+
+  ctx.restore();
+}
+
+/** Rich Goa Beach Scenery Background (Sun, Huts, Scooter, Surfboards, Palm Trees). */
+export function drawGoaBeachScenery(
+  ctx: CanvasRenderingContext2D,
+  w: number,
+  h: number,
+  opts: { skyColor?: string; sunColor?: string; sandColor?: string; waterColor?: string } = {}
+) {
+  const {
+    skyColor = '#0b2f1f',
+    sunColor = '#ffc800',
+    sandColor = '#dfba67',
+    waterColor = '#105c3d',
+  } = opts;
+
+  ctx.save();
+
+  // Ground / Water / Sand
+  const horizonY = h * 0.72;
+  const sandY = h * 0.82;
+
+  ctx.fillStyle = waterColor;
+  ctx.fillRect(0, horizonY, w, sandY - horizonY);
+
+  ctx.fillStyle = sandColor;
+  ctx.fillRect(0, sandY, w, h - sandY);
+
+  // Ocean Waves
+  ctx.strokeStyle = 'rgba(255,255,255,0.4)';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(0, horizonY + 12);
+  ctx.quadraticCurveTo(w * 0.25, horizonY + 4, w * 0.5, horizonY + 12);
+  ctx.quadraticCurveTo(w * 0.75, horizonY + 20, w, horizonY + 12);
+  ctx.stroke();
+
+  // Sun on horizon
+  ctx.fillStyle = sunColor;
+  ctx.beginPath();
+  ctx.arc(w * 0.5, horizonY, 44, Math.PI, Math.PI * 2);
+  ctx.fill();
+
+  // Yellow Scooter on beach
+  ctx.save();
+  ctx.translate(w * 0.82, sandY + 16);
+  ctx.fillStyle = '#ffc800';
+  ctx.beginPath();
+  ctx.roundRect(-20, -12, 40, 18, 5);
+  ctx.fill();
+  ctx.fillStyle = '#222222';
+  ctx.beginPath();
+  ctx.arc(-14, 6, 8, 0, Math.PI * 2);
+  ctx.arc(14, 6, 8, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+
+  // Surfboard on sand
+  ctx.save();
+  ctx.translate(w * 0.14, sandY + 10);
+  ctx.rotate((-25 * Math.PI) / 180);
+  ctx.fillStyle = '#f2226b';
+  ctx.beginPath();
+  ctx.ellipse(0, 0, 10, 36, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = '#ffffff';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  ctx.restore();
+
+  // Beach Shack Hut on right
+  ctx.fillStyle = '#8b5a2b';
+  ctx.fillRect(w * 0.78, horizonY - 40, 70, 40);
+  ctx.fillStyle = '#f2226b';
+  ctx.beginPath();
+  ctx.moveTo(w * 0.76, horizonY - 40);
+  ctx.lineTo(w * 0.83 + 35, horizonY - 65);
+  ctx.lineTo(w * 0.78 + 76, horizonY - 40);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.restore();
+}
+

@@ -1,8 +1,9 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
-import { renderCard, type EditionConfig } from '@/lib/render/engine';
+import { useMemo } from 'react';
+import type { EditionConfig } from '@/lib/render/engine';
 import type { Identity } from '@/lib/identity';
+import CardDisplay from './CardDisplay';
 
 interface Props {
   edition: EditionConfig;
@@ -16,13 +17,24 @@ interface Props {
   className?: string;
 }
 
-export default function CardCanvas({ edition, photo, name, stack, identity, panX = 0, panY = 0, zoom = 1, className }: Props) {
-  const ref = useRef<HTMLCanvasElement>(null);
+export default function CardCanvas({ edition, photo, name, stack, identity, className }: Props) {
+  const photoUrl = useMemo(() => {
+    if (!photo) return null;
+    try {
+      return photo.toDataURL('image/png');
+    } catch {
+      return null;
+    }
+  }, [photo]);
 
-  useEffect(() => {
-    if (!ref.current) return;
-    renderCard(ref.current, edition, { photo, name, stack, identity, pan: { x: panX, y: panY }, zoom }, 2);
-  }, [edition, photo, name, stack, identity, panX, panY, zoom]);
-
-  return <canvas ref={ref} className={className} style={{ width: '100%', height: '100%', display: 'block' }} />;
+  return (
+    <CardDisplay
+      editionId={edition.id}
+      photoUrl={photoUrl}
+      name={name}
+      stack={stack}
+      identity={identity}
+      className={className}
+    />
+  );
 }
