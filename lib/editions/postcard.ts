@@ -47,13 +47,14 @@ export const postcard: EditionConfig = {
 
     // Main Header: HACKER GOA HOUSE
     ctx.save();
-    ctx.textAlign = 'center';
-    ctx.font = `900 52px ${FONT.display}`;
+    ctx.font = `900 44px ${FONT.display}`;
     ctx.fillStyle = COLOR.yellowDeep;
-    ctx.fillText('HACKER', w * 0.4 - 10, 105);
-    ctx.fillText('HOUSE', w * 0.4 + 230, 105);
-    govaMark(ctx, w * 0.4 + 110, 107, 48, -6, 'center');
-    monoText(ctx, '✦ BUILD IN GOA, SHIP FROM PARADISE ✦', w * 0.4 + 110, 138, { size: 11, color: COLOR.pink, align: 'center', weight: '700', tracking: 2 });
+    ctx.textAlign = 'right';
+    ctx.fillText('HACKER', w * 0.45 - 55, 105);
+    ctx.textAlign = 'left';
+    ctx.fillText('HOUSE', w * 0.45 + 55, 105);
+    govaMark(ctx, w * 0.45, 107, 44, -6, 'center');
+    monoText(ctx, '✦ BUILD IN GOA, SHIP FROM PARADISE ✦', w * 0.45, 138, { size: 11, color: COLOR.pink, align: 'center', weight: '700', tracking: 2 });
     ctx.restore();
 
     // Photo Section (Left)

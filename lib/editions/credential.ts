@@ -31,12 +31,13 @@ export const credential: EditionConfig = {
 
     // Top Header Lockup: HACKER GOA HOUSE
     ctx.save();
-    ctx.textAlign = 'center';
-    ctx.font = `900 48px ${FONT.display}`;
+    ctx.font = `900 44px ${FONT.display}`;
     ctx.fillStyle = COLOR.green;
-    ctx.fillText('HACKER', w * 0.5 - 130, 80);
-    ctx.fillText('HOUSE', w * 0.5 + 130, 80);
-    govaMark(ctx, w * 0.5, 82, 46, -6, 'center');
+    ctx.textAlign = 'right';
+    ctx.fillText('HACKER', w * 0.5 - 60, 80);
+    ctx.textAlign = 'left';
+    ctx.fillText('HOUSE', w * 0.5 + 60, 80);
+    govaMark(ctx, w * 0.5, 82, 44, -6, 'center');
     monoText(ctx, '✦ BUILD IN GOA, SHIP FROM PARADISE ✦', w * 0.5, 112, { size: 12, color: COLOR.pink, align: 'center', weight: '700', tracking: 2 });
     ctx.restore();
 

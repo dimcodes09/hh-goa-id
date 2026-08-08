@@ -71,30 +71,13 @@ export default function Result({ edition, rawPhoto, duoPhoto, name, stack, ident
 
   const share = async () => {
     setBusy('share');
-    const caption = `Just got stamped for HH Goa 2026 ${EVENT.hashtag}`;
+    const caption = `Stamped as a builder for Hacker Goa House 2026 🌴🚀\n\nBuilding in Goa, shipping from paradise.\n\n${EVENT.hashtag} #HHGoa2026`;
     // open the tab synchronously, in direct response to the click — opening it after an await
     // gets silently popup-blocked in most browsers, which is why "share" used to feel broken.
     const xTab = window.open('about:blank', '_blank');
     const blob = await buildBlob();
     const ogBlob = await buildOGBlob();
 
-    // mobile: native share sheet attaches the image directly, no download/upload needed at all
-    try {
-      const file = new File([blob], `hh-goa-2026-${edition.id}.png`, { type: 'image/png' });
-      const nav = navigator as Navigator & { canShare?: (data: { files: File[] }) => boolean };
-      const isMobile = /Android|iPhone|iPad|iPod|IEMobile|Opera Mini/i.test(navigator.userAgent);
-      if (isMobile && nav.canShare?.({ files: [file] })) {
-        xTab?.close();
-        await navigator.share({ files: [file], text: caption });
-        setBusy(null);
-        return;
-      }
-    } catch {
-      // user cancelled, or the platform refused — fall through to the link path below
-    }
-
-    // desktop: X's tweet-intent URL has no way to attach a file, only a link. So host the PNG
-    // and hand X a link whose og:image *is* the card — the tweet preview shows it automatically.
     let cardUrl = '';
     let ogUrl = '';
     const ts = Date.now();
@@ -116,7 +99,7 @@ export default function Result({ edition, rawPhoto, duoPhoto, name, stack, ident
         if (data.url) ogUrl = data.url;
       }
     } catch {
-      // ignore upload error and fallback to page URL without forcing a local file download
+      // ignore upload error and fallback to page URL
     }
 
     const cleanId = identity.builderId.replace(/[^a-zA-Z0-9]/g, '');

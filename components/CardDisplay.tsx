@@ -9,6 +9,9 @@ interface CardDisplayProps {
   name: string;
   stack: string;
   identity: Identity;
+  panX?: number;
+  panY?: number;
+  zoom?: number;
   className?: string;
 }
 
@@ -25,6 +28,9 @@ export default function CardDisplay({
   name,
   stack,
   identity,
+  panX = 0,
+  panY = 0,
+  zoom = 1,
   className = '',
 }: CardDisplayProps) {
   const displayName = name.trim() ? name.trim().toUpperCase() : 'YOUR NAME';
@@ -136,18 +142,18 @@ export default function CardDisplay({
 
         {/* Main Title Banner: HACKER GOA HOUSE */}
         <div className="mt-1 text-center">
-          <div className="flex items-center justify-center gap-1.5 font-black leading-none" style={{ fontFamily: 'var(--font-display)' }}>
-            <span className="text-[clamp(20px,4vw,32px)] text-[#0b2f1f]" style={{ color: isSundown ? '#ffd400' : isTransit ? '#a3e635' : '#0b2f1f' }}>
+          <div className="flex items-center justify-center gap-1 font-black leading-none" style={{ fontFamily: 'var(--font-display)' }}>
+            <span className="text-[clamp(14px,3.2vw,22px)] tracking-tight" style={{ color: isSundown ? '#ffd400' : isTransit ? '#a3e635' : '#0b2f1f' }}>
               HACKER
             </span>
-            <span className="text-[clamp(22px,4.5vw,36px)] text-[#f2226b]" style={{ fontFamily: 'var(--font-script)' }}>
+            <span className="text-[clamp(18px,4vw,28px)] text-[#f2226b]" style={{ fontFamily: 'var(--font-script)' }}>
               गोवा
             </span>
-            <span className="text-[clamp(20px,4vw,32px)] text-[#0b2f1f]" style={{ color: isSundown ? '#ffd400' : isTransit ? '#a3e635' : '#0b2f1f' }}>
+            <span className="text-[clamp(14px,3.2vw,22px)] tracking-tight" style={{ color: isSundown ? '#ffd400' : isTransit ? '#a3e635' : '#0b2f1f' }}>
               HOUSE
             </span>
           </div>
-          <div className="mt-0.5 font-mono text-[9px] font-bold tracking-[0.18em] text-[#f2226b]">
+          <div className="mt-0.5 font-mono text-[8px] font-bold tracking-[0.14em] text-[#f2226b]">
             ✦ BUILD IN GOA, SHIP FROM PARADISE ✦
           </div>
         </div>
@@ -161,7 +167,15 @@ export default function CardDisplay({
             <div className="h-full w-full overflow-hidden rounded-full bg-slate-200">
               {photoUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={photoUrl} alt={displayName} className="h-full w-full object-cover" />
+                <img
+                  src={photoUrl}
+                  alt={displayName}
+                  className="h-full w-full object-cover transition-transform duration-75"
+                  style={{
+                    transform: `scale(${zoom}) translate(${(panX || 0) * 15}px, ${(panY || 0) * 15}px)`,
+                  }}
+                />
+              ) : (
               ) : (
                 <div className="flex h-full w-full items-center justify-center bg-[#0b2f1f] text-3xl font-black text-[#ffd400]">
                   {displayName.charAt(0)}

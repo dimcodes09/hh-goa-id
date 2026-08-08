@@ -45,12 +45,13 @@ export const transit: EditionConfig = {
 
     // Top Header: HACKER GOA HOUSE
     ctx.save();
-    ctx.textAlign = 'center';
-    ctx.font = `900 48px ${FONT.display}`;
+    ctx.font = `900 44px ${FONT.display}`;
     ctx.fillStyle = COLOR.yellow;
-    ctx.fillText('HACKER', w * 0.5 - 130, y + 80);
-    ctx.fillText('HOUSE', w * 0.5 + 130, y + 80);
-    govaMark(ctx, w * 0.5, y + 82, 46, -6, 'center');
+    ctx.textAlign = 'right';
+    ctx.fillText('HACKER', w * 0.5 - 60, y + 80);
+    ctx.textAlign = 'left';
+    ctx.fillText('HOUSE', w * 0.5 + 60, y + 80);
+    govaMark(ctx, w * 0.5, y + 82, 44, -6, 'center');
     monoText(ctx, '✦ GOA TRANSIT PASS • HH GOA 2026 ✦', w * 0.5, y + 112, { size: 11, color: COLOR.cream, align: 'center', weight: '700', tracking: 2 });
     ctx.restore();
 

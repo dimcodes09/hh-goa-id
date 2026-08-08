@@ -17,7 +17,7 @@ interface Props {
   className?: string;
 }
 
-export default function CardCanvas({ edition, photo, name, stack, identity, className }: Props) {
+export default function CardCanvas({ edition, photo, name, stack, identity, panX = 0, panY = 0, zoom = 1, className }: Props) {
   const photoUrl = useMemo(() => {
     if (!photo) return null;
     try {
@@ -34,6 +34,9 @@ export default function CardCanvas({ edition, photo, name, stack, identity, clas
       name={name}
       stack={stack}
       identity={identity}
+      panX={panX}
+      panY={panY}
+      zoom={zoom}
       className={className}
     />
   );

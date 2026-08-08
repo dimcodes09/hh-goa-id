@@ -27,11 +27,13 @@ export const sundown: EditionConfig = {
 
     // Header Title
     ctx.save();
-    ctx.textAlign = 'center';
-    ctx.font = `900 50px ${FONT.display}`;
+    ctx.font = `900 44px ${FONT.display}`;
     ctx.fillStyle = COLOR.ink;
-    ctx.fillText('HACKER HOUSE', w * 0.5, 75);
-    govaMark(ctx, w * 0.5, 115, 52, -5, 'center');
+    ctx.textAlign = 'right';
+    ctx.fillText('HACKER', w * 0.5 - 60, 75);
+    ctx.textAlign = 'left';
+    ctx.fillText('HOUSE', w * 0.5 + 60, 75);
+    govaMark(ctx, w * 0.5, 115, 48, -5, 'center');
     monoText(ctx, '2026 • GOA DUSK FESTIVAL', w * 0.5, 142, { size: 13, color: COLOR.ink, align: 'center', weight: '700', tracking: 3 });
     ctx.restore();
 
