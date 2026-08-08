@@ -87,32 +87,27 @@ export default function Result({ edition, rawPhoto, duoPhoto, name, stack, ident
     }
 
     // desktop: X's tweet-intent URL has no way to attach a file, only a link. So host the PNG
-    // and hand X a link whose og:image *is* the card — the tweet preview shows it automatically,
-    // no manual download/attach step for the user.
+    // and hand X a link whose og:image *is* the card — the tweet preview shows it automatically.
+    let hostedUrl = '';
     try {
       const form = new FormData();
       form.append('file', blob, `hh-goa-2026-${edition.id}.png`);
       const res = await fetch('/api/upload', { method: 'POST', body: form });
-      if (!res.ok) throw new Error('upload failed');
-      const { url: hostedUrl } = (await res.json()) as { url: string };
-      const pageUrl = `${window.location.origin}/p/${identity.builderId.replace(/[^a-zA-Z0-9]/g, '')}?img=${encodeURIComponent(hostedUrl)}&name=${encodeURIComponent(name || 'a builder')}`;
-      const intentUrl = `https://x.com/intent/tweet?text=${encodeURIComponent(caption)}&url=${encodeURIComponent(pageUrl)}`;
-      if (xTab) xTab.location.href = intentUrl;
-      else window.open(intentUrl, '_blank', 'noopener');
+      if (res.ok) {
+        const data = (await res.json()) as { url?: string };
+        if (data.url) hostedUrl = data.url;
+      }
     } catch {
-      // hosting unavailable (e.g. Vercel Blob not connected on this deployment yet) — fall back
-      // to a text-only tweet plus a local download so the user can still attach it by hand.
-      const caption2 = `${caption} (image attached below — drag it into the tweet)`;
-      const intentUrl = `https://x.com/intent/tweet?text=${encodeURIComponent(caption2)}`;
-      if (xTab) xTab.location.href = intentUrl;
-      else window.open(intentUrl, '_blank', 'noopener');
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `hh-goa-2026-${edition.id}.png`;
-      a.click();
-      setTimeout(() => URL.revokeObjectURL(url), 4000);
+      // ignore upload error and fallback to page URL without forcing a local file download
     }
+
+    const cleanId = identity.builderId.replace(/[^a-zA-Z0-9]/g, '');
+    const imgParam = hostedUrl ? `?img=${encodeURIComponent(hostedUrl)}&name=${encodeURIComponent(name || 'a builder')}` : `?name=${encodeURIComponent(name || 'a builder')}`;
+    const pageUrl = `${window.location.origin}/p/${cleanId}${imgParam}`;
+    const intentUrl = `https://x.com/intent/tweet?text=${encodeURIComponent(caption)}&url=${encodeURIComponent(pageUrl)}`;
+
+    if (xTab) xTab.location.href = intentUrl;
+    else window.open(intentUrl, '_blank', 'noopener');
     setBusy(null);
   };
 
