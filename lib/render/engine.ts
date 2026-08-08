@@ -209,6 +209,56 @@ export function renderCard(canvas: HTMLCanvasElement, edition: EditionConfig, da
   edition.draw({ ctx, w: CARD_W, h: CARD_H, ...data });
 }
 
+export function renderOGCard(canvas: HTMLCanvasElement, edition: EditionConfig, data: RenderData) {
+  const OG_W = 1200;
+  const OG_H = 630;
+  const scale = 2;
+  canvas.width = OG_W * scale;
+  canvas.height = OG_H * scale;
+  const ctx = canvas.getContext('2d')!;
+  ctx.setTransform(scale, 0, 0, scale, 0, 0);
+
+  ctx.fillStyle = COLOR.green;
+  ctx.fillRect(0, 0, OG_W, OG_H);
+
+  const cardCanvas = document.createElement('canvas');
+  cardCanvas.width = CARD_W;
+  cardCanvas.height = CARD_H;
+  const cardCtx = cardCanvas.getContext('2d')!;
+  edition.draw({ ctx: cardCtx, w: CARD_W, h: CARD_H, ...data });
+
+  const cardH = 570;
+  const cardW = Math.round(cardH * (CARD_W / CARD_H));
+  const cardX = Math.round((OG_W - cardW) / 2);
+  const cardY = Math.round((OG_H - cardH) / 2);
+
+  ctx.save();
+  ctx.shadowColor = 'rgba(11, 47, 31, 0.45)';
+  ctx.shadowBlur = 32;
+  ctx.shadowOffsetY = 16;
+
+  const radius = 20;
+  ctx.fillStyle = COLOR.cream;
+  if (typeof ctx.roundRect === 'function') {
+    ctx.beginPath();
+    ctx.roundRect(cardX, cardY, cardW, cardH, radius);
+    ctx.fill();
+  } else {
+    ctx.fillRect(cardX, cardY, cardW, cardH);
+  }
+
+  ctx.save();
+  if (typeof ctx.roundRect === 'function') {
+    ctx.beginPath();
+    ctx.roundRect(cardX, cardY, cardW, cardH, radius);
+    ctx.clip();
+  }
+  ctx.drawImage(cardCanvas, cardX, cardY, cardW, cardH);
+  ctx.restore();
+
+  ctx.restore();
+}
+
 export function renderPFP(canvas: HTMLCanvasElement, data: RenderData, dpr = 2) {
   const S = PFP_SIZE;
   canvas.width = S * dpr;

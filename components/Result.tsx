@@ -3,7 +3,7 @@
 import { useCallback, useRef, useState } from 'react';
 import { Download, Share2, RefreshCw, LayoutGrid, Move, Palette, type LucideIcon } from 'lucide-react';
 import CardCanvas from './CardCanvas';
-import { renderCard, renderPFP, type EditionConfig } from '@/lib/render/engine';
+import { renderCard, renderOGCard, renderPFP, type EditionConfig } from '@/lib/render/engine';
 import { EVENT } from '@/lib/tokens';
 import type { Identity } from '@/lib/identity';
 
@@ -39,6 +39,12 @@ export default function Result({ edition, rawPhoto, duoPhoto, name, stack, ident
     return new Promise<Blob>((resolve) => c.toBlob((b) => resolve(b as Blob), 'image/png'));
   }, [edition, photo, name, stack, identity, pan, zoom]);
 
+  const buildOGBlob = useCallback(async () => {
+    const c = document.createElement('canvas');
+    renderOGCard(c, edition, { photo, name, stack, identity, pan, zoom });
+    return new Promise<Blob>((resolve) => c.toBlob((b) => resolve(b as Blob), 'image/png'));
+  }, [edition, photo, name, stack, identity, pan, zoom]);
+
   const download = async () => {
     setBusy('download');
     const blob = await buildBlob();
@@ -70,6 +76,7 @@ export default function Result({ edition, rawPhoto, duoPhoto, name, stack, ident
     // gets silently popup-blocked in most browsers, which is why "share" used to feel broken.
     const xTab = window.open('about:blank', '_blank');
     const blob = await buildBlob();
+    const ogBlob = await buildOGBlob();
 
     // mobile: native share sheet attaches the image directly, no download/upload needed at all
     try {
@@ -91,7 +98,7 @@ export default function Result({ edition, rawPhoto, duoPhoto, name, stack, ident
     let hostedUrl = '';
     try {
       const form = new FormData();
-      form.append('file', blob, `hh-goa-2026-${edition.id}.png`);
+      form.append('file', ogBlob, `hh-goa-2026-${edition.id}-og.png`);
       const res = await fetch('/api/upload', { method: 'POST', body: form });
       if (res.ok) {
         const data = (await res.json()) as { url?: string };
@@ -102,7 +109,10 @@ export default function Result({ edition, rawPhoto, duoPhoto, name, stack, ident
     }
 
     const cleanId = identity.builderId.replace(/[^a-zA-Z0-9]/g, '');
-    const imgParam = hostedUrl ? `?img=${encodeURIComponent(hostedUrl)}&name=${encodeURIComponent(name || 'a builder')}` : `?name=${encodeURIComponent(name || 'a builder')}`;
+    const ts = Date.now();
+    const imgParam = hostedUrl
+      ? `?img=${encodeURIComponent(hostedUrl)}&name=${encodeURIComponent(name || 'a builder')}&e=${edition.id}&v=${ts}`
+      : `?name=${encodeURIComponent(name || 'a builder')}&e=${edition.id}&v=${ts}`;
     const pageUrl = `${window.location.origin}/p/${cleanId}${imgParam}`;
     const intentUrl = `https://x.com/intent/tweet?text=${encodeURIComponent(caption)}&url=${encodeURIComponent(pageUrl)}`;
 
