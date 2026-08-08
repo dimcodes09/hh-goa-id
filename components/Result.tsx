@@ -24,7 +24,7 @@ function slug(s: string) {
 }
 
 export default function Result({ edition, rawPhoto, duoPhoto, name, stack, identity, onSwitchEdition, onRegenerate, onBack }: Props) {
-  const [fullColor, setFullColor] = useState(false);
+  const [fullColor, setFullColor] = useState(true);
   const [reposition, setReposition] = useState(false);
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
@@ -41,26 +41,39 @@ export default function Result({ edition, rawPhoto, duoPhoto, name, stack, ident
 
   const download = async () => {
     setBusy('download');
-    const blob = await buildBlob();
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `hh-goa-2026-${edition.id}-${slug(name)}.png`;
-    a.click();
-    setTimeout(() => URL.revokeObjectURL(url), 4000);
-    setBusy(null);
+    try {
+      const blob = await buildBlob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `hh-goa-2026-${edition.id}-${slug(name)}.png`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 10000);
+    } catch (e) {
+      console.error('Download error:', e);
+    } finally {
+      setBusy(null);
+    }
   };
 
   const downloadPFP = async () => {
-    const c = document.createElement('canvas');
-    renderPFP(c, { photo, name, stack, identity, pan, zoom }, 2);
-    const blob: Blob = await new Promise((resolve) => c.toBlob((b) => resolve(b as Blob), 'image/png'));
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `hh-goa-2026-pfp-${slug(name)}.png`;
-    a.click();
-    setTimeout(() => URL.revokeObjectURL(url), 4000);
+    try {
+      const c = document.createElement('canvas');
+      renderPFP(c, { photo, name, stack, identity, pan, zoom }, 2);
+      const blob: Blob = await new Promise((resolve) => c.toBlob((b) => resolve(b as Blob), 'image/png'));
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `hh-goa-2026-pfp-${slug(name)}.png`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 10000);
+    } catch (e) {
+      console.error('PFP download error:', e);
+    }
   };
 
   const share = async () => {
