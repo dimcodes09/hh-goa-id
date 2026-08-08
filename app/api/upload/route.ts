@@ -10,12 +10,15 @@ export async function POST(req: Request) {
     if (!(file instanceof File)) {
       return NextResponse.json({ error: 'no file' }, { status: 400 });
     }
+    const storeId = process.env.BLOB_STORE_ID || process.env.VERCEL_BLOB_STORE_ID;
     const blob = await put(`cards/${Date.now()}-${Math.random().toString(36).slice(2)}.png`, file, {
       access: 'public',
       contentType: 'image/png',
+      ...(storeId ? { storeId } : {}),
     });
     return NextResponse.json({ url: blob.url });
   } catch (e) {
     return NextResponse.json({ error: e instanceof Error ? e.message : 'upload failed' }, { status: 500 });
   }
 }
+
