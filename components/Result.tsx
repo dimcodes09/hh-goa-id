@@ -3,7 +3,7 @@
 import { useCallback, useRef, useState } from 'react';
 import { Download, Share2, RefreshCw, LayoutGrid, Move, Palette, type LucideIcon } from 'lucide-react';
 import CardCanvas from './CardCanvas';
-import { renderCard, renderOGCard, renderPFP, type EditionConfig } from '@/lib/render/engine';
+import { renderCard, renderPFP, type EditionConfig } from '@/lib/render/engine';
 import { EVENT } from '@/lib/tokens';
 import type { Identity } from '@/lib/identity';
 
@@ -39,12 +39,6 @@ export default function Result({ edition, rawPhoto, duoPhoto, name, stack, ident
     return new Promise<Blob>((resolve) => c.toBlob((b) => resolve(b as Blob), 'image/png'));
   }, [edition, photo, name, stack, identity, pan, zoom]);
 
-  const buildOGBlob = useCallback(async () => {
-    const c = document.createElement('canvas');
-    renderOGCard(c, edition, { photo, name, stack, identity, pan, zoom });
-    return new Promise<Blob>((resolve) => c.toBlob((b) => resolve(b as Blob), 'image/png'));
-  }, [edition, photo, name, stack, identity, pan, zoom]);
-
   const download = async () => {
     setBusy('download');
     const blob = await buildBlob();
@@ -71,48 +65,16 @@ export default function Result({ edition, rawPhoto, duoPhoto, name, stack, ident
 
   const share = async () => {
     setBusy('share');
+    // 1. Save PNG to device so user can attach to tweet
+    await download();
+
+    // 2. Open X Intent directly with high-reach caption
     const caption = `Stamped as a builder for Hacker Goa House 2026 🌴🚀\n\nBuilding in Goa, shipping from paradise.\n\n${EVENT.hashtag} #HHGoa2026`;
-    // open the tab synchronously, in direct response to the click — opening it after an await
-    // gets silently popup-blocked in most browsers, which is why "share" used to feel broken.
-    const xTab = window.open('about:blank', '_blank');
-    const blob = await buildBlob();
-    const ogBlob = await buildOGBlob();
-
-    let cardUrl = '';
-    let ogUrl = '';
-    const ts = Date.now();
-    try {
-      const cardFilename = `cards/hh-goa-2026-${edition.id}-${ts}.png`;
-      const ogFilename = `cards/hh-goa-2026-${edition.id}-${ts}-og.png`;
-
-      const [cardRes, ogRes] = await Promise.all([
-        fetch(`/api/upload?filename=${encodeURIComponent(cardFilename)}`, { method: 'POST', body: blob }),
-        fetch(`/api/upload?filename=${encodeURIComponent(ogFilename)}`, { method: 'POST', body: ogBlob }),
-      ]);
-
-      if (cardRes.ok) {
-        const data = (await cardRes.json()) as { url?: string };
-        if (data.url) cardUrl = data.url;
-      }
-      if (ogRes.ok) {
-        const data = (await ogRes.json()) as { url?: string };
-        if (data.url) ogUrl = data.url;
-      }
-    } catch {
-      // ignore upload error and fallback to page URL
-    }
-
     const cleanId = identity.builderId.replace(/[^a-zA-Z0-9]/g, '');
-    const mainImg = cardUrl || ogUrl;
-    const ogImg = ogUrl || cardUrl;
-    const imgParam = mainImg
-      ? `?img=${encodeURIComponent(mainImg)}&og=${encodeURIComponent(ogImg)}&name=${encodeURIComponent(name || 'a builder')}&e=${edition.id}&v=${ts}`
-      : `?name=${encodeURIComponent(name || 'a builder')}&e=${edition.id}&v=${ts}`;
-    const pageUrl = `${window.location.origin}/p/${cleanId}${imgParam}`;
+    const pageUrl = `${window.location.origin}/p/${cleanId}?name=${encodeURIComponent(name || 'a builder')}&e=${edition.id}`;
     const intentUrl = `https://x.com/intent/tweet?text=${encodeURIComponent(caption)}&url=${encodeURIComponent(pageUrl)}`;
 
-    if (xTab) xTab.location.href = intentUrl;
-    else window.open(intentUrl, '_blank', 'noopener');
+    window.open(intentUrl, '_blank', 'noopener');
     setBusy(null);
   };
 
