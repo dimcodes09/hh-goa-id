@@ -176,7 +176,6 @@ export default function CardDisplay({
                   }}
                 />
               ) : (
-              ) : (
                 <div className="flex h-full w-full items-center justify-center bg-[#0b2f1f] text-3xl font-black text-[#ffd400]">
                   {displayName.charAt(0)}
                 </div>
