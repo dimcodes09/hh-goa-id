@@ -1,6 +1,5 @@
-'use client';
-
-import { useMemo } from 'react';
+import { useEffect, useState } from 'react';
+import QRCode from 'qrcode';
 import type { EditionId } from '@/lib/tokens';
 import type { Identity } from '@/lib/identity';
 
@@ -13,27 +12,12 @@ interface CardDisplayProps {
   className?: string;
 }
 
-function generateQRPath(builderId: string) {
-  let hash = 0;
-  for (let i = 0; i < builderId.length; i++) {
-    hash = (hash * 31 + builderId.charCodeAt(i)) >>> 0;
-  }
-  const rects: string[] = [];
-  // Corner finders
-  rects.push('M2 2h8v8H2V2zm2 2v4h4V4H4zm8-2h8v8h-8V2zm2 2v4h4V4h-4zM2 14h8v8H2v-8zm2 2v4h4v-4H4z');
-  // Data bits
-  for (let r = 0; r < 5; r++) {
-    for (let c = 0; c < 5; c++) {
-      hash = (hash * 1664525 + 1013904223) >>> 0;
-      if (hash % 2 === 0) {
-        const x = 12 + c * 2;
-        const y = 12 + r * 2;
-        rects.push(`M${x} ${y}h1.8v1.8H${x}z`);
-      }
-    }
-  }
-  return rects.join(' ');
-}
+const EDITION_CLASSES: Record<EditionId, string> = {
+  credential: 'MAX AURA SHIPPER',
+  sundown: 'GOATED STACK GOD',
+  postcard: 'NO CAP ARCHITECT',
+  transit: 'SIGMA PROTOCOL DEV',
+};
 
 export default function CardDisplay({
   editionId,
@@ -45,9 +29,31 @@ export default function CardDisplay({
 }: CardDisplayProps) {
   const displayName = name.trim() ? name.trim().toUpperCase() : 'YOUR NAME';
   const displayRole = stack.trim() ? stack.trim().toUpperCase() : 'DEVELOPER / ROLE';
-  const displayClass = identity.cls ? identity.cls.toUpperCase() : 'TERMINAL WIZARD';
+
+  // Distinct builder class for each edition card
+  const displayClass = EDITION_CLASSES[editionId] || identity.cls || 'TERMINAL WIZARD';
   const builderId = identity.builderId || '#HH26-9837';
-  const qrPath = useMemo(() => generateQRPath(builderId), [builderId]);
+
+  // Real scannable QR Code redirecting to live URL
+  const [realQrDataUrl, setRealQrDataUrl] = useState<string>('');
+
+  useEffect(() => {
+    let mounted = true;
+    const targetUrl = `https://hh-goa-id-delta.vercel.app/`;
+    QRCode.toDataURL(targetUrl, {
+      margin: 1,
+      width: 180,
+      color: {
+        dark: '#0b2f1f',
+        light: '#ffffff',
+      },
+    }).then((url) => {
+      if (mounted) setRealQrDataUrl(url);
+    });
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   // Theme-specific styling variables
   const isSundown = editionId === 'sundown';
@@ -250,11 +256,13 @@ export default function CardDisplay({
 
             {/* Right: QR Code & Approved Seal */}
             <div className="flex flex-col items-center">
-              <div className="flex h-14 w-14 items-center justify-center rounded-md border border-[#0b2f1f] bg-white p-1 shadow-sm">
-                {/* SVG QR Code Simulation */}
-                <svg viewBox="0 0 24 24" className="h-full w-full fill-[#0b2f1f]">
-                  <path d={qrPath} />
-                </svg>
+              <div className="flex h-14 w-14 items-center justify-center rounded-md border border-[#0b2f1f] bg-white p-0.5 shadow-sm">
+                {realQrDataUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={realQrDataUrl} alt="Real Scannable QR Code" className="h-full w-full object-contain" />
+                ) : (
+                  <div className="h-full w-full bg-slate-100 animate-pulse" />
+                )}
               </div>
               <span className="mt-0.5 font-mono text-[7px] font-bold text-[#f2226b]">✦ SCAN TO EXPLORE ✦</span>
             </div>
