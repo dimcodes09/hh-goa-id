@@ -215,7 +215,7 @@ export default function Upload({ previewUrl, processing, error, onFile, name, se
               <input
                 value={name}
                 onChange={(e) => setName(e.target.value.slice(0, 24))}
-                placeholder="e.g. Satoshi Nakamoto"
+                placeholder="e.g. Elon Musk"
                 className="w-full rounded-xl border border-[var(--cream)]/20 bg-[var(--cream)]/10 px-4 py-3 font-[var(--font-mono)] text-[14px] uppercase tracking-[.06em] text-[var(--cream)] placeholder-[var(--cream)]/35 outline-none transition-all focus:border-[var(--yellow)] focus:bg-[var(--cream)]/15 focus:ring-2 focus:ring-[var(--yellow)]/20"
               />
             </label>
