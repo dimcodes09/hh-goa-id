@@ -1,5 +1,3 @@
-Use this shorter README. It is enough for a hackathon project and doesn't look bloated.
-
 ````markdown
 # 🌴 HH Goa Builder Passport
 
