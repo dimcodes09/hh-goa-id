@@ -128,7 +128,9 @@ export default function Result({ edition, rawPhoto, duoPhoto, name, stack, ident
   };
 
   return (
-    <div className="flex min-h-[100svh] flex-col items-center bg-[var(--green)] px-6 pb-10 pt-6 sm:px-10">
+    <div className="relative flex min-h-[100svh] flex-col items-center bg-[var(--green)] bg-cover bg-center bg-no-repeat px-6 pb-10 pt-6 sm:px-10" style={{
+      backgroundImage: "linear-gradient(180deg, rgba(8, 39, 26, 0.78) 0%, rgba(5, 28, 19, 0.88) 100%), url('/upload_bg.jpg')",
+    }}>
       <div className="mb-6 flex w-full max-w-[420px] items-center justify-between">
         <button onClick={onBack} className="font-[var(--font-mono)] text-[13px] text-[var(--cream)]">
           ← BACK

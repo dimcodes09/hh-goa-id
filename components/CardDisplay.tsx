@@ -143,19 +143,19 @@ export default function CardDisplay({
         </div>
 
         {/* Title Lockup: HACKER GOA HOUSE */}
-        <div className="mt-0.5 text-center">
-          <div className="flex items-center justify-center gap-1 font-black leading-none" style={{ fontFamily: 'var(--font-display)' }}>
-            <span className="text-[clamp(16px,3.8vw,26px)] tracking-tight drop-shadow-sm" style={{ color: isSundown ? '#ffd400' : isTransit ? '#a3e635' : '#0b2f1f' }}>
+        <div className="mt-1 flex flex-col items-center">
+          <div className="inline-flex items-center justify-center gap-1.5 rounded-full border-2 border-[#ffd400] bg-[#0b2f1f]/90 px-3.5 py-1 text-center shadow-lg backdrop-blur-md">
+            <span className="font-[var(--font-display)] text-[clamp(14px,3.5vw,22px)] font-black tracking-wider text-[#ffd400]">
               HACKER
             </span>
-            <span className="text-[clamp(20px,4.5vw,32px)] text-[#f2226b] drop-shadow-sm" style={{ fontFamily: 'var(--font-script)' }}>
+            <span className="font-[var(--font-script)] text-[clamp(17px,4vw,26px)] font-bold text-[#f2226b]">
               गोवा
             </span>
-            <span className="text-[clamp(16px,3.8vw,26px)] tracking-tight drop-shadow-sm" style={{ color: isSundown ? '#ffd400' : isTransit ? '#a3e635' : '#0b2f1f' }}>
+            <span className="font-[var(--font-display)] text-[clamp(14px,3.5vw,22px)] font-black tracking-wider text-[#ffd400]">
               HOUSE
             </span>
           </div>
-          <div className="mt-0.5 font-mono text-[8px] font-bold tracking-[0.16em] text-[#f2226b] drop-shadow-sm">
+          <div className="mt-1 inline-block rounded-full bg-[#f2226b] px-2.5 py-0.5 font-mono text-[8px] font-black tracking-[0.16em] text-white shadow-sm">
             ✦ BUILD IN GOA, SHIP FROM PARADISE ✦
           </div>
         </div>
@@ -211,13 +211,13 @@ export default function CardDisplay({
       {/* Centered Name & Role Pills */}
       <div className="relative z-10 text-center">
         {/* Name Pill */}
-        <div className="inline-flex max-w-[90%] truncate rounded-full border-2 border-[#ffd400] bg-[#0b2f1f] px-4 py-1 font-mono text-[clamp(13px,3vw,17px)] font-black tracking-wider text-white shadow-xl">
+        <div className="inline-flex max-w-[92%] truncate rounded-full border-2 border-[#ffd400] bg-[#0b2f1f] px-5 py-1 font-mono text-[clamp(13px,3.2vw,17px)] font-black tracking-wider text-white shadow-xl">
           ✦ {displayName} ✦
         </div>
 
         {/* Role Pill */}
         <div className="mt-1 flex justify-center">
-          <div className="inline-flex max-w-[85%] truncate items-center gap-1 rounded-full border border-[#0b2f1f] bg-[#ffd400] px-3 py-0.5 font-mono text-[9px] font-extrabold tracking-widest text-[#0b2f1f] shadow-md">
+          <div className="inline-flex max-w-[88%] truncate items-center gap-1 rounded-full border border-[#0b2f1f] bg-[#ffd400] px-3.5 py-0.5 font-mono text-[9px] font-extrabold tracking-widest text-[#0b2f1f] shadow-md">
             <span>⚡</span>
             <span className="truncate">{displayRole}</span>
             <span>⚡</span>
@@ -226,15 +226,15 @@ export default function CardDisplay({
       </div>
 
       {/* Bottom Section: Tropical Goa Ticket Pass Grid */}
-      <div className="relative z-10 mt-1 rounded-xl border-2 border-[#0b2f1f] bg-[#fbf3de]/95 p-2 text-[#0b2f1f] shadow-xl backdrop-blur-sm">
-        <div className="grid grid-cols-3 items-center gap-1 text-center font-mono text-[8px]">
+      <div className="relative z-10 mt-1 rounded-2xl border-2 border-[#0b2f1f] bg-[#fbf3de] p-2 text-[#0b2f1f] shadow-xl">
+        <div className="grid grid-cols-3 items-start gap-1 text-center font-mono text-[8px]">
           {/* Column 1: Builder Class & QR Code */}
           <div className="flex flex-col items-center">
-            <span className="text-[7px] font-bold text-[#0b2f1f]/70">
+            <span className="text-[7.5px] font-extrabold text-[#0b2f1f]/75">
               ✦ BUILDER AURA ✦
             </span>
-            <span className="truncate font-black text-[#f2226b]">{displayClass}</span>
-            <div className="mt-1 flex h-12 w-12 items-center justify-center rounded-md border border-[#0b2f1f] bg-white p-0.5 shadow-sm">
+            <span className="w-full truncate font-black text-[#f2226b]">{displayClass}</span>
+            <div className="mt-1 flex h-13 w-13 items-center justify-center rounded-md border border-[#0b2f1f] bg-white p-0.5 shadow-sm">
               {realQrDataUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={realQrDataUrl} alt="QR Code" className="h-full w-full object-contain" />
@@ -242,30 +242,30 @@ export default function CardDisplay({
                 <div className="h-full w-full bg-slate-100 animate-pulse" />
               )}
             </div>
-            <span className="mt-0.5 text-[6px] font-bold text-[#f2226b]">⚡ SCAN FOR ACCESS</span>
+            <span className="mt-0.5 text-[6.5px] font-black text-[#f2226b]">⚡ SCAN FOR ACCESS</span>
           </div>
 
           {/* Column 2: Beach Essentials */}
           <div className="flex flex-col items-center border-x border-[#0b2f1f]/20 px-1">
-            <span className="text-[7px] font-bold text-[#0b2f1f]/70">
+            <span className="text-[7.5px] font-extrabold text-[#0b2f1f]/75">
               ✦ GOA VIBES ✦
             </span>
-            <div className="mt-0.5 flex flex-col gap-0.5 text-[7.5px] font-extrabold text-[#0b2f1f]">
-              <span className="flex items-center gap-0.5">🥥 <span>COCONUT</span></span>
-              <span className="flex items-center gap-0.5">💻 <span>VS CODE</span></span>
-              <span className="flex items-center gap-0.5">🎧 <span>LO-FI VIBES</span></span>
+            <div className="mt-1 flex flex-col gap-1 text-[8px] font-black text-[#0b2f1f]">
+              <span className="flex items-center justify-center gap-0.5">🥥 COCONUT</span>
+              <span className="flex items-center justify-center gap-0.5">💻 VS CODE</span>
+              <span className="flex items-center justify-center gap-0.5">🎧 LO-FI VIBES</span>
             </div>
           </div>
 
           {/* Column 3: Shipping Status & Builder Pass ID */}
           <div className="flex flex-col items-center">
-            <span className="text-[7px] font-bold text-[#0b2f1f]/70">
+            <span className="text-[7.5px] font-extrabold text-[#0b2f1f]/75">
               ✦ SHIPPING STATUS ✦
             </span>
-            <span className="truncate font-black text-[#f2226b]">BUILDING FUTURE</span>
-            <div className="mt-1 flex flex-col items-center rounded-md bg-[#0b2f1f] px-1.5 py-0.5 text-[#fbf3de] shadow-sm">
-              <span className="text-[6px] font-bold text-[#ffd400]">BUILDER ID</span>
-              <span className="text-[9px] font-black text-white">{builderId}</span>
+            <span className="w-full truncate font-black text-[#f2226b]">BUILDING FUTURE</span>
+            <div className="mt-1 flex flex-col items-center rounded-md bg-[#0b2f1f] px-2 py-0.5 text-[#fbf3de] shadow-sm">
+              <span className="text-[6.5px] font-bold text-[#ffd400]">BUILDER ID</span>
+              <span className="text-[10px] font-black text-white">{builderId}</span>
             </div>
           </div>
         </div>
