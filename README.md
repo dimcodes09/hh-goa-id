@@ -39,17 +39,8 @@ npm run dev
 
 Open `http://localhost:3000`
 
-## 🌴 Live
-
-[https://hh-goa-id-delta.vercel.app/](https://hh-goa-id-delta.vercel.app/)
+## 🌴 Live:-
+https://hh-goa-id-delta.vercel.app/
 
 Built for **Hacker House Goa 2026**.
-
 #FrameInGoa
-
-```
-
-**GitHub description:**
-
-> 🌴 Goa-inspired Builder Passport for Hacker House Goa 2026. Turn your photo into a collectible Hacker House identity.
-```
