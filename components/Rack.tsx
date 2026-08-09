@@ -85,7 +85,15 @@ export default function Rack({ photo, name, stack, identity, selected, onSelect,
   }, [activeIdx]);
 
   return (
-    <div className="flex min-h-[100svh] flex-col bg-[var(--green)]">
+    <div
+      className="relative flex min-h-[100svh] flex-col overflow-x-hidden bg-[var(--green)] bg-cover bg-center bg-no-repeat"
+      style={{
+        backgroundImage: "linear-gradient(180deg, rgba(8, 39, 26, 0.82) 0%, rgba(5, 28, 19, 0.9) 100%), url('/rack_bg.jpg')",
+      }}
+    >
+      {/* Ambient Radial Glow Overlays */}
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,rgba(255,212,0,0.12),transparent_70%)]" />
+
       {/* Top Navbar Header */}
       <div className="flex items-center justify-between px-6 py-5 sm:px-10">
         <button onClick={onBack} className="flex items-center gap-2 font-[var(--font-mono)] text-[13px] font-bold text-[var(--cream)] hover:text-[var(--yellow)] transition-colors">

@@ -22,15 +22,20 @@ export default function Upload({ previewUrl, processing, error, onFile, name, se
   const [dragOver, setDragOver] = useState(false);
 
   return (
-    <div className="relative flex min-h-[100svh] flex-col overflow-x-hidden bg-[var(--green)]">
-      {/* Background Glow & Watermark */}
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_20%,rgba(255,212,0,0.08),transparent_60%)]" />
-      <div className="pointer-events-none absolute -left-12 top-28 select-none font-[var(--font-mono)] text-[160px] font-bold text-[var(--cream)]/[0.03]">
+    <div
+      className="relative flex min-h-[100svh] flex-col overflow-x-hidden bg-[var(--green)] bg-cover bg-center bg-no-repeat"
+      style={{
+        backgroundImage: "linear-gradient(180deg, rgba(8, 39, 26, 0.78) 0%, rgba(5, 28, 19, 0.88) 100%), url('/upload_bg.jpg')",
+      }}
+    >
+      {/* Ambient Radial Glow Overlays */}
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_35%,rgba(255,212,0,0.14),transparent_65%)]" />
+      <div className="pointer-events-none absolute -left-12 top-28 select-none font-[var(--font-mono)] text-[160px] font-bold text-[var(--cream)]/[0.04]">
         गोवा
       </div>
 
       {/* Top Navbar */}
-      <header className="relative z-20 flex flex-wrap items-center justify-between border-b border-[var(--yellow)]/20 bg-[#08271a]/90 px-6 py-4 backdrop-blur-md sm:px-10">
+      <header className="relative z-20 flex flex-wrap items-center justify-between border-b border-[var(--yellow)]/20 bg-[#08271a]/95 px-6 py-4 backdrop-blur-md sm:px-10">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-3.5">
             <div className="flex flex-col text-[14px] font-black leading-none text-[var(--yellow)]" style={{ fontFamily: 'var(--font-display)' }}>
@@ -74,35 +79,43 @@ export default function Upload({ previewUrl, processing, error, onFile, name, se
       <main className="relative z-10 flex flex-1 flex-col items-center justify-center px-4 py-8 sm:px-8 sm:py-12">
         {/* Hero Title Header */}
         <div className="mb-8 flex flex-col items-center text-center">
-          <div className="inline-flex items-center gap-2 rounded-full border border-[var(--yellow)]/30 bg-[var(--yellow)]/10 px-4 py-1.5 font-[var(--font-mono)] text-[11px] font-bold tracking-[.14em] text-[var(--yellow)]">
+          <div className="inline-flex items-center gap-2 rounded-full border border-[var(--yellow)]/40 bg-[var(--yellow)]/15 px-4 py-1.5 font-[var(--font-mono)] text-[11px] font-bold tracking-[.14em] text-[var(--yellow)] shadow-lg backdrop-blur-md">
             <span className="h-2 w-2 rounded-full bg-[var(--yellow)] animate-ping" />
             STAMP OFFICE • PHOTO STATION
           </div>
 
-          <h1 className="mt-4 font-[var(--font-display)] text-[clamp(30px,5vw,48px)] font-black leading-tight text-[var(--cream)] drop-shadow-sm">
+          <h1 className="mt-4 font-[var(--font-display)] text-[clamp(30px,5vw,48px)] font-black leading-tight text-[var(--cream)] drop-shadow-md">
             Issue Your Builder Pass
           </h1>
-          <p className="mt-2 max-w-md font-[var(--font-mono)] text-[12px] tracking-[.04em] text-[var(--cream)]/75 sm:text-[13px]">
+          <p className="mt-2 max-w-md font-[var(--font-mono)] text-[12px] tracking-[.04em] text-[var(--cream)]/85 sm:text-[13px]">
             Present your photograph &amp; developer identity to stamp your official pass.
           </p>
         </div>
 
         {/* Elevated Custom Form Card */}
         <div
-          className="relative w-full max-w-[480px] rounded-3xl border-2 border-[var(--yellow)]/30 p-7 sm:p-9 shadow-2xl backdrop-blur-xl"
+          className="relative w-full max-w-[490px] rounded-3xl border-2 border-[var(--yellow)]/50 p-7 sm:p-9 shadow-2xl backdrop-blur-2xl"
           style={{
-            background: 'linear-gradient(180deg, rgba(11,47,31,0.92) 0%, rgba(7,33,22,0.96) 100%)',
-            boxShadow: '0 25px 60px rgba(0,0,0,0.45), 0 0 30px rgba(255,212,0,0.06)',
+            background: 'linear-gradient(180deg, rgba(8,42,28,0.95) 0%, rgba(4,24,16,0.98) 100%)',
+            boxShadow: '0 30px 80px rgba(0,0,0,0.7), 0 0 45px rgba(255,212,0,0.14)',
           }}
         >
+          {/* Top Form Header Strip */}
+          <div className="mb-6 flex items-center justify-between border-b border-[var(--yellow)]/20 pb-3 font-[var(--font-mono)] text-[10px] font-bold tracking-[.16em] text-[var(--yellow)]">
+            <span className="flex items-center gap-1.5">
+              <span className="h-1.5 w-1.5 rounded-full bg-[var(--yellow)]" /> STAMP OFFICE • FORM ID-01
+            </span>
+            <span className="text-[var(--pink)]">HH GOA 2026</span>
+          </div>
+
           {/* Photo Section */}
           <div className="flex flex-col gap-2.5">
             <div className="flex items-center justify-between font-[var(--font-mono)] text-[11px] font-bold tracking-[.14em] text-[var(--yellow)]">
               <span>01. BUILDER PHOTOGRAPH</span>
-              <span className="text-[var(--cream)]/50">REQUIRED</span>
+              <span className="rounded bg-[var(--pink)]/20 px-2 py-0.5 text-[9px] text-[var(--pink)]">REQUIRED</span>
             </div>
 
-            <div className="relative">
+            <div className="relative mt-1">
               <div
                 onClick={() => inputRef.current?.click()}
                 onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
@@ -115,10 +128,10 @@ export default function Upload({ previewUrl, processing, error, onFile, name, se
                 }}
                 className="group relative flex h-[220px] w-full cursor-pointer items-center justify-center overflow-hidden rounded-2xl border-2 border-dashed transition-all duration-300"
                 style={{
-                  background: 'rgba(251,243,222,0.95)',
+                  background: 'rgba(251,243,222,0.96)',
                   borderColor: dragOver ? 'var(--pink)' : 'rgba(11,47,31,.4)',
                   transform: dragOver ? 'scale(1.015)' : undefined,
-                  boxShadow: 'inset 0 2px 10px rgba(0,0,0,0.1)',
+                  boxShadow: 'inset 0 2px 10px rgba(0,0,0,0.12)',
                 }}
               >
                 {previewUrl ? (
@@ -165,10 +178,10 @@ export default function Upload({ previewUrl, processing, error, onFile, name, se
                 initial={{ rotate: 12 }}
                 animate={{ rotate: [12, -4, 12] }}
                 transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut' }}
-                className="pointer-events-none absolute -right-5 -top-5 flex h-16 w-16 items-center justify-center rounded-full border-2 border-dashed text-center shadow-xl"
+                className="pointer-events-none absolute -right-3 -top-3 z-10 flex h-14 w-14 items-center justify-center rounded-full border-2 border-dashed text-center shadow-xl"
                 style={{ background: 'var(--cream)', borderColor: 'var(--pink)' }}
               >
-                <span className="font-[var(--font-script)] text-[11px] font-bold leading-tight text-[var(--pink)]">
+                <span className="font-[var(--font-script)] text-[10px] font-bold leading-tight text-[var(--pink)]">
                   no cap,
                   <br />
                   lock in
@@ -183,7 +196,7 @@ export default function Upload({ previewUrl, processing, error, onFile, name, se
             <div className="mt-2.5 text-center">
               <button
                 onClick={() => inputRef.current?.click()}
-                className="font-[var(--font-mono)] text-[11px] font-bold tracking-[.08em] text-[var(--teal)] underline hover:opacity-80"
+                className="font-[var(--font-mono)] text-[11px] font-bold tracking-[.08em] text-[var(--yellow)] underline hover:opacity-80"
               >
                 RE-UPLOAD PHOTOGRAPH
               </button>
@@ -209,26 +222,26 @@ export default function Upload({ previewUrl, processing, error, onFile, name, se
             </div>
 
             <label className="flex flex-col gap-1.5">
-              <span className="flex items-center gap-1.5 font-[var(--font-mono)] text-[10px] font-bold tracking-[.12em] text-[var(--cream)]/75">
-                <User size={12} className="text-[var(--yellow)]" /> FULL NAME *
+              <span className="flex items-center gap-1.5 font-[var(--font-mono)] text-[10px] font-bold tracking-[.12em] text-[var(--cream)]/85">
+                <User size={13} className="text-[var(--yellow)]" /> FULL NAME *
               </span>
               <input
                 value={name}
                 onChange={(e) => setName(e.target.value.slice(0, 24))}
                 placeholder="e.g. Elon Musk"
-                className="w-full rounded-xl border border-[var(--cream)]/20 bg-[var(--cream)]/10 px-4 py-3 font-[var(--font-mono)] text-[14px] uppercase tracking-[.06em] text-[var(--cream)] placeholder-[var(--cream)]/35 outline-none transition-all focus:border-[var(--yellow)] focus:bg-[var(--cream)]/15 focus:ring-2 focus:ring-[var(--yellow)]/20"
+                className="w-full rounded-xl border-2 border-[var(--yellow)]/35 bg-[#062217] px-4 py-3.5 font-[var(--font-mono)] text-[14px] uppercase tracking-[.06em] text-[var(--cream)] placeholder-[var(--cream)]/40 outline-none shadow-inner transition-all focus:border-[var(--yellow)] focus:bg-[#072a1c] focus:ring-2 focus:ring-[var(--yellow)]/30"
               />
             </label>
 
             <label className="flex flex-col gap-1.5">
-              <span className="flex items-center gap-1.5 font-[var(--font-mono)] text-[10px] font-bold tracking-[.12em] text-[var(--cream)]/75">
-                <Sparkles size={12} className="text-[var(--yellow)]" /> STACK / ROLE *
+              <span className="flex items-center gap-1.5 font-[var(--font-mono)] text-[10px] font-bold tracking-[.12em] text-[var(--cream)]/85">
+                <Sparkles size={13} className="text-[var(--yellow)]" /> STACK / ROLE *
               </span>
               <input
                 value={stack}
                 onChange={(e) => setStack(e.target.value.slice(0, 26))}
                 placeholder="e.g. Full-Stack / Rust / AI"
-                className="w-full rounded-xl border border-[var(--cream)]/20 bg-[var(--cream)]/10 px-4 py-3 font-[var(--font-mono)] text-[14px] uppercase tracking-[.06em] text-[var(--cream)] placeholder-[var(--cream)]/35 outline-none transition-all focus:border-[var(--yellow)] focus:bg-[var(--cream)]/15 focus:ring-2 focus:ring-[var(--yellow)]/20"
+                className="w-full rounded-xl border-2 border-[var(--yellow)]/35 bg-[#062217] px-4 py-3.5 font-[var(--font-mono)] text-[14px] uppercase tracking-[.06em] text-[var(--cream)] placeholder-[var(--cream)]/40 outline-none shadow-inner transition-all focus:border-[var(--yellow)] focus:bg-[#072a1c] focus:ring-2 focus:ring-[var(--yellow)]/30"
               />
             </label>
           </div>
